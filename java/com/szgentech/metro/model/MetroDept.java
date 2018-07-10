@@ -2,6 +2,7 @@ package com.szgentech.metro.model;
 
 import java.util.Date;
 import java.util.List;
+a
 
 /**
  * 部门
