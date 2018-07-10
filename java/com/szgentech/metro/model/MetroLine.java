@@ -9,6 +9,11 @@ import java.util.List;
  * @author MAJL
  *
  */
+ 
+ 
+ 
+ 
+ 
 public class MetroLine implements java.io.Serializable{
 	/**
 	 * 
@@ -40,14 +45,6 @@ public class MetroLine implements java.io.Serializable{
 
 	public String getLineName() {
 		return lineName;
-	}
-
-	public void setLineName(String lineName) {
-		this.lineName = lineName;
-	}
-
-	public String getLineColor() {
-		return lineColor;
 	}
 
 	public void setLineColor(String lineColor) {

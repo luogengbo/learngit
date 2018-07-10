@@ -13,15 +13,15 @@ public class MetroDept implements java.io.Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = 8903616571131818638L;
+	
+	
+	public MetroDept(){}
+	
 	private Long id;//系统ID
 	private String deptNo;//部门编号
 	private String deptName;//部门名称
 	private int isDel;//是否删除0否 1是
 	private Date updateTime;//更新时间
-	private Date createTime;//创建时间
-	private List<MetroUser> userList;//部门人员	
-	
-	public MetroDept(){}
 	
 	public MetroDept(String deptName){
 		this.deptName = deptName;
@@ -75,13 +75,5 @@ public class MetroDept implements java.io.Serializable{
 		this.createTime = createTime;
 	}
 
-	public List<MetroUser> getUserList() {
-		return userList;
-	}
-
-	public void setUserList(List<MetroUser> userList) {
-		this.userList = userList;
-	}
-	
 	
 }

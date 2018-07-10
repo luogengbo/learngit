@@ -38,16 +38,6 @@ public class MetroMonitorReportController extends BaseController {
 	public String list() {
 		return "/find-info/info_monitor_report";
 	}
-
-	@RequestMapping("/to/report")
-	public String toReport(@RequestParam("intervalId") Long intervalId, @RequestParam("lineId") Long lineId) {
-
-		modelMap.addAttribute("intervalId", intervalId);
-		modelMap.addAttribute("lineId", lineId);
-
-		return "/find-info/info_monitor_report_ring";
-	}
-
 	@RequestMapping("/ring/export")
 	@ResponseBody
 	public CommonResponse exportRing(@RequestParam("intervalId") Long intervalId, @RequestParam("lineId") Long lineId,
@@ -84,4 +74,16 @@ public class MetroMonitorReportController extends BaseController {
 		diss[2] = false;
 		return JsTreeUtil.getTreeDataForReport(request, city, urls, diss);
 	}
+	
+	
+
+	@RequestMapping("/to/report")
+	public String toReport(@RequestParam("intervalId") Long intervalId, @RequestParam("lineId") Long lineId) {
+
+		modelMap.addAttribute("intervalId", intervalId);
+		modelMap.addAttribute("lineId", lineId);
+
+		return "/find-info/info_monitor_report_ring";
+	}
+
 }
