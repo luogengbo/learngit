@@ -115,29 +115,5 @@ public class MetroLine implements java.io.Serializable{
 		this.intervalList = intervalList;
 	}
 
-	/**
-	 * 获取cityId
-	 * @return cityId cityId
-	 */
-	public Long getCityId() {
-		return cityId;
-	}
-
-	/**
-	 * 设置cityId
-	 * @param cityId cityId 
-	 */
-	public void setCityId(Long cityId) {
-		this.cityId = cityId;
-	}
-
-	public Integer getLineNo() {
-		return lineNo;
-	}
-
-	public void setLineNo(Integer lineNo) {
-		this.lineNo = lineNo;
-	}
-	
 	
 }
