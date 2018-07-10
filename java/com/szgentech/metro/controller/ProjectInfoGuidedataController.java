@@ -63,7 +63,28 @@ public class ProjectInfoGuidedataController extends BaseController {
 		return "/project-info/item_guide";
 	}
 	
-	
+	/**
+	 * 加载左右线的导向数据信息页面
+	 * 
+	 * @return
+	 */
+	@RequestMapping("/lrinfo")
+	public String lrinfo(
+			@RequestParam("intervalId") String intervalId,
+			@RequestParam("leftOrRight") String leftOrRight,
+			@RequestParam("desc") String desc) {
+		/*
+		 * PageResultSet<MetroDictionary> dicSet =
+		 * dictionaryService.findMetroDictionaryInfo(0, 1000);
+		 * request.setAttribute("dics", dicSet.getList());
+		 */
+		request.setAttribute("intervalId", intervalId);
+		request.setAttribute("leftOrRight", leftOrRight);
+		request.setAttribute("desc", desc);
+
+		return "/project-info/item_guide_right";
+	}
+
 	/**
 	 * 导出导向数据信息
 	 */
@@ -189,29 +210,6 @@ public class ProjectInfoGuidedataController extends BaseController {
 		}
 		return commonResponse;
 	}
-	
-	/**
-	 * 加载左右线的导向数据信息页面
-	 * 
-	 * @return
-	 */
-	@RequestMapping("/lrinfo")
-	public String lrinfo(
-			@RequestParam("intervalId") String intervalId,
-			@RequestParam("leftOrRight") String leftOrRight,
-			@RequestParam("desc") String desc) {
-		/*
-		 * PageResultSet<MetroDictionary> dicSet =
-		 * dictionaryService.findMetroDictionaryInfo(0, 1000);
-		 * request.setAttribute("dics", dicSet.getList());
-		 */
-		request.setAttribute("intervalId", intervalId);
-		request.setAttribute("leftOrRight", leftOrRight);
-		request.setAttribute("desc", desc);
-
-		return "/project-info/item_guide_right";
-	}
-
 
 	/**
 	 * 删除导向数据信息
