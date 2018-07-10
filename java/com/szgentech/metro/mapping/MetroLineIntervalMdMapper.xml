@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.szgentech.metro.dao.IMetroLineIntervalMdDao">
+<resultMap id="lineIntervalMdResultMap" type="com.szgentech.metro.model.MetroLineIntervalMd" >
+	<id property="id" column="id"/>
+	<result property="mdReId" column="md_re_id"/>
+	<result property="mdNo" column="md_no"/>
+	<result property="startElevation" column="start_elevation"/>
+	<result property="upnoceElevation" column="upnoce_elevation"/>
+	<result property="thisElevation" column="this_elevation"/>
+	<result property="thisVar" column="this_var"/>
+	<result property="sumVar" column="sum_var"/>
+	<result property="mileage" column="mileage"/>
+	<result property="updateTime" column="update_time"/>
+	<result property="createTime" column="create_time"/>
+</resultMap>
+
+<insert id="insertObj" parameterType="com.szgentech.metro.model.MetroLineIntervalMd" useGeneratedKeys="true" keyProperty="id">
+	insert into metro_line_interval_md(md_re_id,md_no,start_elevation,upnoce_elevation,this_elevation,this_var,sum_var,mileage,create_time)
+	values(#{mdReId},#{mdNo},#{startElevation},#{upnoceElevation},#{thisElevation},#{thisVar},#{sumVar},#{mileage},now())
+</insert>
+
+<update id="updateObj" parameterType="java.util.HashMap">
+	update metro_line_interval_md 
+	set update_time=now()
+	<if test="mdReId != null">
+	  ,md_re_id=#{mdReId}
+	</if>
+	<if test="mdNo != null">
+	  ,md_no=#{mdNo}
+	</if>
+	<if test="startElevation != null">
+	  ,start_elevation=#{startElevation}
+	</if>
+	<if test="upnoceElevation != null">
+	  ,upnoce_elevation=#{upnoceElevation}
+	</if>
+	<if test="thisElevation != null">
+	  ,this_elevation=#{thisElevation}
+	</if>
+	<if test="thisVar != null">
+	  ,this_var=#{thisVar}
+	</if>
+	<if test="sumVar != null">
+	  ,sum_var=#{sumVar}
+	</if>
+	<if test="mileage != null">
+	  ,mileage=#{mileage}
+	</if>
+	where id=#{intervalMdId}
+</update>
+
+<delete id="deleteObj" parameterType="java.util.HashMap">
+	delete from metro_line_interval_md where id=#{intervalMdId}
+</delete>
+
+<select id="findObjById" parameterType="java.util.HashMap" resultMap="lineIntervalMdResultMap">
+	select * from metro_line_interval_md where id=#{intervalMdId}
+</select>
+
+<!-- 批量插入(monitor_date不需要修改) -->
+<insert id="insertObjs" parameterType="java.util.List">
+	insert into metro_line_interval_md(md_re_id,md_no,start_elevation,upnoce_elevation,this_elevation,this_var,sum_var,mileage,create_time,monitor_date)
+    values
+    <foreach collection="list" item="item" index="index" separator=",">
+          (#{item.mdReId},#{item.mdNo},#{item.startElevation},#{item.upnoceElevation},#{item.thisElevation},#{item.thisVar},#{item.sumVar},#{item.mileage},now(),#{item.monitorDate})
+    </foreach>
+</insert>
+
+<!-- s -->
+<delete id="deleteByIntervalMdReId" parameterType="long">
+    delete from metro_line_interval_md where md_re_id=#{intervalMdReId}
+</delete>
+
+</mapper>

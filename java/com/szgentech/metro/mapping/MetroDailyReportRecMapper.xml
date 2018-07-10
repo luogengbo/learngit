@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.szgentech.metro.dao.IMetroDailyReportRecDao">
+<resultMap id="dailyReprtRecResultMap" type="com.szgentech.metro.model.MetroDailyreportRec" >
+	<id property="id" column="id"/>
+	<result property="intervalId" column="interval_id"/>
+	<result property="leftOrRight" column="left_or_right"/>
+	<result property="reportName" column="report_name"/>
+	<result property="reportTime" column="report_time"/>
+	<result property="reportUrl" column="report_url"/>
+	<result property="uploadPeople" column="upload_people"/>
+	<result property="updateTime" column="update_time"/>
+	<result property="createTime" column="create_time"/>
+</resultMap>
+	<insert id="insertObj" parameterType="com.szgentech.metro.model.MetroDailyreportRec" useGeneratedKeys="true" keyProperty="id">
+		INSERT into metro_interval_daily_report_rec(interval_id,left_or_right,report_name,report_time,report_url,upload_people,create_time)
+		VALUES(#{intervalId},#{leftOrRight},#{reportName},#{reportTime},#{reportUrl},#{uploadPeople},now())
+	</insert>
+	
+	<select id="findDailyReportRec" parameterType="java.util.HashMap" resultMap="dailyReprtRecResultMap">
+        SELECT * FROM metro_interval_daily_report_rec 
+        WHERE
+ 			interval_id=#{intervalId}
+ 		AND left_or_right=#{leftOrRight}
+ 		AND report_time=#{reportTime}
+	</select>
+	
+	<!-- 总记录数 -->
+	<select id="countObjs" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+		SELECT COUNT(1) FROM metro_interval_daily_report_rec 
+		WHERE 1=1 
+		<if test="intervalId != null">
+		AND interval_id=#{intervalId}
+		</if>
+		<if test="leftOrRight != null">
+		AND left_or_right=#{leftOrRight}
+		</if>
+		<if test="reportTime != null">
+		AND report_time=#{reportTime}
+		</if>
+	</select>
+
+	<!-- 分页查询 -->
+	<select id="findObjsList" parameterType="java.util.HashMap" resultMap="dailyReprtRecResultMap">
+		SELECT * FROM metro_interval_daily_report_rec 
+		WHERE 1=1 
+		<if test="intervalId != null">
+		AND interval_id=#{intervalId}
+		</if>
+		<if test="leftOrRight != null">
+		AND left_or_right=#{leftOrRight}
+		</if>
+		<if test="reportTime != null">
+		AND report_time=#{reportTime}
+		</if>
+		ORDER BY report_time DESC
+		LIMIT #{start},#{pageSize}
+	</select>
+	
+	<delete id="deleteObj" parameterType="java.util.HashMap">
+		DELETE FROM metro_interval_daily_report_rec 
+		WHERE id=#{dailyReprotId}
+	</delete>
+
+</mapper>

@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.szgentech.metro.dao.IMetroWeeklyReportDao">
+<resultMap id="weeklyReprtResultMap" type="com.szgentech.metro.model.MetroWeeklyReport" >
+	<id property="id" column="id"/>
+	<result property="intervalId" column="interval_id"/>
+	<result property="leftOrRight" column="left_or_right"/>
+	<result property="summary" column="summary"/>
+	<result property="shieldTunneling" column="shield_tunneling"/>
+	<result property="shieldTunnelingImg" column="shield_tunneling_img"/>
+	<result property="riskSituation" column="risk_situation"/>
+	<result property="riskSituationImg" column="risk_situation_img"/>
+	<result property="geology" column="geology"/>
+	<result property="geologyImg" column="geology_img"/>
+	<result property="effect" column="effect"/>
+	<result property="effectImg" column="effect_img"/>
+	<result property="settlement" column="settlement"/>
+	<result property="settlementImg" column="settlement_img"/>
+	<result property="paramAnalysis" column="param_analysis"/>
+	<result property="paramAnalysisImg" column="param_analysis_img"/>
+	<result property="slagSamplesImg" column="slag_samples_img"/>
+	<result property="horizontalAttitude" column="horizontal_attitude"/>
+	<result property="horizontalAttitudeImg" column="horizontal_attitude_img"/>
+	<result property="verticalAttitude" column="vertical_attitude"/>
+	<result property="verticalAttitudeImg" column="vertical_attitude_img"/>
+	<result property="grouting" column="grouting"/>
+	<result property="groutingImg" column="grouting_img"/>
+	<result property="oiltemperature" column="oiltemperature"/>
+	<result property="oiltemperatureImg" column="oiltemperature_img"/>
+	<result property="earlyWarning" column="early_warning"/>
+	<result property="earlyWarningImg" column="early_warning_img"/>
+	<result property="auditOpinion" column="audit_opinion"/>
+	<result property="reportTime" column="report_time"/>
+	<result property="operator" column="operator"/>
+	<result property="reviewer" column="reviewer"/>
+	<result property="startRingNum" column="start_ring_num"/>
+	<result property="endRingNum" column="end_ring_num"/>
+	<result property="startPressure" column="start_pressure"/>
+	<result property="endPressure" column="end_pressure"/>
+	<result property="startCutterTorque" column="start_cutter_torque"/>
+	<result property="endCutterTorque" column="end_cutter_torque"/>
+	<result property="startTotalThrust" column="start_total_thrust"/>
+	<result property="endTotalThrust" column="end_total_thrust"/>
+	<result property="startCutterSpeed" column="start_cutter_speed"/>
+	<result property="endCutterSpeed" column="end_cutter_speed"/>
+	<result property="startSpeed" column="start_speed"/>
+	<result property="endSpeed" column="end_speed"/>
+	<result property="startGroutingAmount" column="start_grouting_amount"/>
+	<result property="endGroutingAmount" column="end_grouting_amount"/>
+	<result property="updateTime" column="update_time"/>
+	<result property="createTime" column="create_time"/>
+</resultMap>
+	<insert id="insertObj" parameterType="com.szgentech.metro.model.MetroWeeklyReport"
+	useGeneratedKeys="true" keyProperty="id">
+	INSERT INTO
+	metro_weeklyreport(interval_id,left_or_right,summary,shield_tunneling,shield_tunneling_img,risk_situation,risk_situation_img,geology,geology_img,
+	effect,effect_img,settlement,settlement_img,param_analysis,param_analysis_img,slag_samples_img,horizontal_attitude,horizontal_attitude_img,vertical_attitude,
+	vertical_attitude_img,grouting,grouting_img,oiltemperature,oiltemperature_img,early_warning,early_warning_img,audit_opinion,report_time,operator,reviewer,
+	start_ring_num,end_ring_num,start_pressure,end_pressure,start_cutter_torque,end_cutter_torque,start_total_thrust,end_total_thrust,start_cutter_speed,
+	end_cutter_speed,start_speed,end_speed,start_grouting_amount,end_grouting_amount)
+	VALUES
+	(#{intervalId},#{leftOrRight},#{summary},#{shieldTunneling},#{shieldTunnelingImg},#{riskSituation},#{riskSituationImg},#{geology},#{geologyImg},
+	#{effect},#{effectImg},#{settlement},#{settlementImg},#{paramAnalysis},#{paramAnalysisImg},#{slagSamplesImg},#{horizontalAttitude},#{horizontalAttitudeImg},
+	#{verticalAttitude},#{verticalAttitudeImg},#{grouting},#{groutingImg},#{oiltemperature},#{oiltemperatureImg},#{earlyWarning},#{earlyWarningImg},
+	#{auditOpinion},#{reportTime},#{operator},#{reviewer},#{startRingNum},#{endRingNum},#{startPressure},#{endPressure},#{startCutterTorque},#{endCutterTorque},
+	#{startTotalThrust},#{endTotalThrust},#{startCutterSpeed},#{endCutterSpeed},#{startSpeed},#{endSpeed},#{startGroutingAmount},#{endGroutingAmount})
+
+</insert>
+	
+	<update id="updateObj" parameterType="java.util.HashMap">
+	UPDATE metro_weeklyreport
+	<set>
+	<if test="intervalId != null">
+	  interval_id=#{intervalId},
+	</if>
+	<if test="leftOrRight != null">
+	  left_or_right=#{leftOrRight},
+	</if>
+	<if test="summary != null">
+	  summary=#{summary},
+	</if>
+	<if test="shieldTunneling != null">
+	  shield_tunneling=#{shieldTunneling},
+	</if>
+	<if test="shieldTunnelingImg != null">
+	  shield_tunneling_img=#{shieldTunnelingImg},
+	</if>
+		<if test="riskSituation != null">
+	  risk_situation=#{riskSituation},
+	</if>
+	<if test="riskSituationImg != null">
+	  risk_situation_img=#{riskSituationImg},
+	</if>
+	<if test="geology != null">
+	  geology=#{geology},
+	</if>
+	<if test="geologyImg != null">
+	  geology_img=#{geologyImg},
+	</if>
+	<if test="effect != null">
+	  effect=#{effect},
+	</if>
+	<if test="effectImg != null">
+	  effect_img=#{effectImg},
+	</if>
+	<if test="settlement != null">
+	  settlement=#{settlement},
+	</if>
+	<if test="settlementImg != null">
+	  settlement_img=#{settlementImg},
+	</if>
+	<if test="paramAnalysis != null">
+	  param_analysis=#{paramAnalysis},
+	</if>
+	<if test="paramAnalysisImg != null">
+	  param_analysis_img=#{paramAnalysisImg},
+	</if>
+	<if test="slagSamplesImg != null">
+	  slag_samples_img=#{slagSamplesImg},
+	</if>
+	<if test="horizontalAttitude != null">
+	  horizontal_attitude=#{horizontalAttitude},
+	</if>
+	<if test="horizontalAttitudeImg != null">
+	  horizontal_attitude_img=#{horizontalAttitudeImg},
+	</if>
+	<if test="verticalAttitude != null">
+	  vertical_attitude=#{verticalAttitude},
+	</if>
+	<if test="verticalAttitudeImg != null">
+	  vertical_attitude_img=#{verticalAttitudeImg},
+	</if>
+	<if test="grouting != null">
+	  grouting=#{grouting},
+	</if>
+	<if test="groutingImg != null">
+	  grouting_img=#{groutingImg},
+	</if>
+	<if test="oiltemperature != null">
+	  oiltemperature=#{oiltemperature},
+	</if>
+	<if test="oiltemperatureImg != null">
+	  oiltemperature_img=#{oiltemperatureImg},
+	</if>
+	<if test="earlyWarning != null">
+	  early_warning=#{earlyWarning},
+	</if>
+	<if test="earlyWarningImg != null">
+	  early_warning_img=#{earlyWarningImg},
+	</if>
+	<if test="auditOpinion != null">
+	  audit_opinion=#{auditOpinion},
+	</if>
+	<if test="reportTime != null">
+	  report_time=#{reportTime},
+	</if>
+	<if test="reviewer != null">
+	  reviewer=#{reviewer},
+	</if>
+	<if test="operator != null">
+	  operator=#{operator},
+	</if>
+	<if test="startRingNum != null">
+	  start_ring_num=#{startRingNum},
+	</if>
+	<if test="endRingNum != null">
+	  end_ring_num=#{endRingNum},
+	</if>
+	<if test="startPressure != null">
+	  start_pressure=#{startPressure},
+	</if>
+	<if test="endPressure != null">
+	  end_pressure=#{endPressure},
+	</if>
+	<if test="startCutterTorque != null">
+	  start_cutter_torque=#{startCutterTorque},
+	</if>
+	<if test="endCutterTorque != null">
+	  end_cutter_torque=#{endCutterTorque},
+	</if>
+	<if test="startTotalThrust != null">
+	  start_total_thrust=#{startTotalThrust},
+	</if>
+	<if test="endTotalThrust != null">
+	  end_total_thrust=#{endTotalThrust},
+	</if>
+	<if test="startCutterSpeed != null">
+	  start_cutter_speed=#{startCutterSpeed},
+	</if>
+	<if test="endCutterSpeed != null">
+	  end_cutter_speed=#{endCutterSpeed},
+	</if>
+	<if test="startSpeed != null">
+	  start_speed=#{startSpeed},
+	</if>
+	<if test="endSpeed != null">
+	  end_speed=#{endSpeed},
+	</if>
+	<if test="startGroutingAmount != null">
+	  start_grouting_amount=#{startGroutingAmount},
+	</if>
+	<if test="endGroutingAmount != null">
+	  end_grouting_amount=#{endGroutingAmount}
+	</if>
+	</set>
+	WHERE id=#{id}
+	</update>
+
+	<select id="findWeeklyReport" parameterType="java.util.HashMap" resultMap="weeklyReprtResultMap">
+        SELECT * FROM metro_weeklyreport WHERE
+ 		interval_id=#{intervalId}
+ 		AND left_or_right=#{leftOrRight}
+ 		AND date_format(report_time,'%Y-%m-%d')=date_format(#{reportTime},'%Y-%m-%d')
+	</select>
+
+	<!-- 总记录数 -->
+	<select id="countObjs" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+		SELECT COUNT(1) FROM metro_weeklyreport 
+		WHERE 1=1 
+		<if test="intervalId != null">
+		AND interval_id=#{intervalId}
+		</if>
+		<if test="leftOrRight != null">
+		AND left_or_right=#{leftOrRight}
+		</if>
+		<if test="reportTime != null">
+		AND report_time=#{reportTime}
+		</if>
+	</select>
+
+	<!-- 分页查询 -->
+	<select id="findObjsList" parameterType="java.util.HashMap" resultMap="weeklyReprtResultMap">
+		SELECT w.id, w.interval_id, w.left_or_right, w.report_time, w.operator, w.reviewer FROM metro_weeklyreport w
+		WHERE 1=1 
+		<if test="intervalId != null">
+		AND w.interval_id=#{intervalId}
+		</if>
+		<if test="leftOrRight != null">
+		AND w.left_or_right=#{leftOrRight}
+		</if>
+		<if test="reportTime != null">
+		AND w.report_time=#{reportTime}
+		</if>
+		ORDER BY w.report_time DESC
+		LIMIT #{start},#{pageSize}
+	</select>
+</mapper>

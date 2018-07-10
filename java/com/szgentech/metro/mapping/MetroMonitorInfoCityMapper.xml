@@ -1,0 +1,353 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.szgentech.metro.dao.IMetroMonitorCityDao">
+	<resultMap type="com.szgentech.metro.model.MonitorInfoCity"
+		id="monitorCityResultMap">
+		<result property="cityName" column="city_name" />
+		<result property="lineName" column="line_name" />
+		<result property="lineNo" column="line_no" />
+		<result property="intervalName" column="interval_name" />
+		<result property="intervalMark" column="interval_mark" />
+		<result property="buildStatus" column="build_status" />
+		<result property="leftOrRight" column="left_or_right" />
+		<result property="ringNum" column="ring_num" />
+		<result property="machineNo" column="machine_no" />
+		<result property="buildDate" column="build_date" />
+		<result property="throughDate" column="through_date" />
+		<result property="speedQualifiedRange" column="speed_qualified_range" />
+		<result property="time" column="update_time" />
+		<result property="intervalId" column="interval_id" />
+		<result property="machineType" column="machine_type" />
+		<result property="machineContractor" column="machine_contractor" />
+		<result property="direction" column="direction" />
+		
+	</resultMap>
+
+	<select id="countMonitorInfoCityDatas" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+		SELECT count(1)
+		FROM metro_line_interval i
+		INNER JOIN metro_line_interval_lr lr ON i.id=lr.interval_id
+		<if test="buildStatus!=null">AND lr.build_status=#{buildStatus}</if>
+		<if test="buildStatus==null">AND lr.build_status>0</if>
+		INNER JOIN (select * from metro_line
+		<if test="lineId!=null">where id=#{lineId}</if>
+		) l ON i.line_id=l.id
+		AND l.line_status=1 AND i.`status`=1
+		INNER JOIN (select * from metro_city where id=1) c ON l.city_id=c.id
+		<if test="userId!=null">
+			INNER JOIN metro_user_data_rel re ON i.id=re.interval_id AND
+			lr.left_or_right=re.left_or_right
+			INNER JOIN metro_user u ON u.id=re.user_id AND u.is_del=0
+			WHERE re.user_id=#{userId}
+		</if>
+		<if test="intervalName != null">
+			AND i.interval_name LIKE concat('%', #{intervalName}, '%')
+		</if>
+	</select>
+
+	<select id="findMonitorInfoCityDatas" parameterType="java.util.HashMap" resultMap="monitorCityResultMap">
+		SELECT
+		l.line_no,l.line_name,
+		i.interval_name,i.interval_mark,lr.build_status,
+		lr.left_or_right,lr.ring_num,lr.interval_id,lr.build_date,lr.through_date
+		FROM metro_line_interval i
+		INNER JOIN metro_line_interval_lr lr ON i.id=lr.interval_id
+		<if test="buildStatus!=null">AND lr.build_status=#{buildStatus}</if>
+		<if test="buildStatus==null">AND lr.build_status>0</if>
+		INNER JOIN (select * from metro_line
+		<if test="lineId!=null">where id=#{lineId}</if>
+		) l ON i.line_id=l.id
+		AND l.line_status=1 AND i.`status`=1
+		INNER JOIN (select * from metro_city where id=1) c ON l.city_id=c.id
+		<if test="userId!=null">
+			INNER JOIN metro_user_data_rel re ON i.id=re.interval_id AND
+			lr.left_or_right=re.left_or_right
+			INNER JOIN metro_user u ON u.id=re.user_id AND u.is_del=0
+			WHERE re.user_id=#{userId}
+		</if>
+		<if test="intervalName != null">
+			AND i.interval_name LIKE concat('%', #{intervalName}, '%')
+		</if>
+		ORDER BY lr.build_Status=1 DESC ,lr.update_time DESC
+		LIMIT #{start},#{pageSize}
+	</select>
+
+	<select id="findMonitorInfoCityLoop" parameterType="java.util.HashMap" resultMap="monitorCityResultMap">
+		SELECT l.line_no, l.line_name,
+			i.interval_name, i.interval_mark,
+			lr.left_or_right, lr.ring_num, lr.machine_type
+		FROM metro_line_interval i
+		INNER JOIN metro_line_interval_lr lr ON i.id = lr.interval_id
+		INNER JOIN metro_line l ON i.line_id = l.id
+		WHERE l.line_name=#{lineName}
+			AND i.interval_name=#{intervalName}
+			AND lr.left_or_right=#{leftOrRight}
+	</select>
+
+	<select id="findIntervalInfo" parameterType="java.util.Map" resultMap="monitorCityResultMap">
+		SELECT l.line_no, l.line_name, i.interval_name, i.interval_mark
+		FROM metro_line_interval i
+		INNER JOIN metro_line l ON i.line_id = l.id
+		<where>
+			<if test="lineId!=null">
+				l.id = #{lineId}
+			</if>
+		</where>
+		ORDER by l.line_name, i.interval_name ASC
+	</select>
+
+	<select id="findMonitorInfoDatas" parameterType="java.util.HashMap" resultMap="monitorCityResultMap">
+		SELECT
+			l.line_no, l.line_name,
+			i.interval_name, i.interval_mark,
+			lr.left_or_right, lr.ring_num
+		FROM metro_line_interval i
+		INNER JOIN metro_line_interval_lr lr ON i.id = lr.interval_id
+		INNER JOIN metro_line l ON i.line_id = l.id
+		<where>
+			<if test="lineId!=null">
+				l.id = #{lineId}
+			</if>
+		</where>
+	</select>
+
+	<select id="findAllMonitorInfoCityDatas" parameterType="java.util.HashMap" resultMap="monitorCityResultMap">
+		SELECT l.line_no,l.line_name,
+			i.interval_name, i.interval_mark,
+			lr.left_or_right
+		FROM metro_line_interval i
+		INNER JOIN metro_line_interval_lr lr ON i.id=lr.interval_id
+		INNER JOIN metro_line l ON i.line_id=l.id
+		INNER JOIN metro_city c ON l.city_id=c.id
+		INNER JOIN metro_user_data_rel re ON lr.interval_id=re.interval_id AND lr.left_or_right=re.left_or_right
+		WHERE c.id=1 AND lr.build_status>0
+		<if test="lineId!=null">
+			AND l.id=#{lineId}
+		</if>
+		<if test="userId!=null">
+			AND re.user_id=#{userId}
+		</if>
+	</select>
+
+	<select id="findIntervalMonitorInfoDatas" parameterType="java.util.HashMap" resultMap="monitorCityResultMap">
+		SELECT c.city_name, l.line_name, i.interval_name, lr.left_or_right
+		FROM metro_line_interval i
+		INNER JOIN metro_line_interval_lr lr ON i.id = lr.interval_id
+		INNER JOIN metro_line l ON i.line_id = l.id
+		INNER JOIN metro_city c ON l.city_id = c.id
+		WHERE lr.interval_id = #{intervalId}
+			AND lr.left_or_right = #{leftOrRight}
+			AND c.id=1
+	</select>
+
+	<resultMap type="com.szgentech.metro.model.KeyValue" id="totalResultMap">
+		<result property="key" column="k" />
+		<result property="value" column="v" />
+	</resultMap>
+	<select id="findCountMechineDatas" parameterType="java.util.HashMap" resultMap="totalResultMap">
+		SELECT lr.build_status k,count(1) v FROM metro_line_interval_lr lr 
+		INNER JOIN metro_line_interval i ON i.id=lr.interval_id
+		INNER JOIN (select * FROM metro_line
+		<if test="lineId!=null">WHERE id=#{lineId}</if>
+		) l ON l.id=i.line_id
+		<if test="userId!=1">
+			INNER JOIN (select * from metro_user_data_rel
+			<if test="userId!=null">
+				WHERE user_id=#{userId}
+			</if>
+			) re ON lr.interval_id=re.interval_id AND
+			lr.left_or_right=re.left_or_right
+			INNER JOIN metro_user u ON u.id=re.user_id AND u.is_del=0
+		</if>
+		GROUP BY lr.build_status
+	</select>
+
+	<select id="findMonitorInfoCity" parameterType="java.util.HashMap" resultMap="monitorCityResultMap">
+		SELECT c.city_name,
+			l.line_no, l.line_name, 
+			i.interval_name, i.interval_mark,
+			lr.build_status, lr.left_or_right, lr.ring_num,lr.machine_no,
+			lr.build_date,lr.speed_qualified_range,lr.machine_contractor,lr.direction
+		FROM metro_line_interval i
+		INNER JOIN metro_line_interval_lr lr ON i.id=lr.interval_id
+		INNER JOIN metro_line l ON i.line_id=l.id
+		INNER JOIN metro_city c ON l.city_id=c.id
+		WHERE i.id=#{intervalId}
+			AND lr.left_or_right=#{leftOrRight}
+			AND c.id=1
+	</select>
+
+	<resultMap id="lineIntervalMdResultMap" type="com.szgentech.metro.model.MetroLineIntervalMd">
+		<id property="id" column="id" />
+		<result property="mdReId" column="md_re_id" />
+		<result property="mdNo" column="md_no" />
+		<result property="startElevation" column="start_elevation" />
+		<result property="upnoceElevation" column="upnoce_elevation" />
+		<result property="thisElevation" column="this_elevation" />
+		<result property="thisVar" column="this_var" />
+		<result property="sumVar" column="sum_var" />
+		<result property="mileage" column="mileage" />
+		<result property="updateTime" column="update_time" />
+		<result property="createTime" column="create_time" />
+		<result property="monitorDate" column="monitor_date" />
+		<result property="spSpeed" column="sp_speed" />
+	</resultMap>
+
+	<select id="findMonitorInfoIntervalData" parameterType="java.util.HashMap" resultMap="lineIntervalMdResultMap">
+		select
+		sp_speed,C.monitor_date,C.id,C.md_re_id,C.md_no,start_elevation,upnoce_elevation,this_elevation,this_var,sum_var,mileage,C.update_time,C.create_time
+		from
+		(select
+		COALESCE(A.this_var/( TIMESTAMPDIFF(SECOND,B.monitor_date,A.monitor_date)
+		/60/60/24),A.this_var) sp_speed,A.*
+		from(
+		select a.*,(@i := @i + 1) as ord_num from metro_line_interval_md a,(select
+		@i := 0) d where md_no = #{mdNo} order by id
+		) as A LEFT JOIN (
+		select a.*,(@j := @j + 1) as ord_num from metro_line_interval_md a,(select
+		@j := 1) c where md_no = #{mdNo} order by id
+		)as B on A.ord_num=B.ord_num
+		order by A.id desc
+		)
+		as C left join
+		metro_line_interval_md_re mdre on
+		C.md_re_id = mdre.id
+		WHERE
+		C.monitor_date
+		BETWEEN STR_TO_DATE(#{beginTime},'%Y-%m-%d %H:%i:%s')
+		AND STR_TO_DATE(#{endTime},'%Y-%m-%d %H:%i:%s')
+		;
+	</select>
+
+
+	<!-- 查询沉降点信息 -->
+	<resultMap type="com.szgentech.metro.model.MonitorIntervalData" id="monitorIntervalDataResultMap">
+		<result column="spName" property="spName" />
+		<collection property="dataPoints" javaType="java.util.List"
+			ofType="com.szgentech.metro.model.MonitorIntervalSettlementPoint">
+			<result property="thisVar" column="thisVar" />
+			<result property="sumVar" column="sumVar" />
+			<result property="originMileage" column="originMileage" />
+			<result property="monitorDate" column="monitorDate" />
+		</collection>
+	</resultMap>
+
+	<!-- 一个沉降点一条曲线(已修改) -->
+	<select id="findMonitorIntervalMonitorData" parameterType="java.util.HashMap" resultMap="monitorIntervalDataResultMap">
+		SELECT md.md_no spName, md.this_var thisVar, md.sum_var sumVar, sp.origin_mileage originMileage, md.monitor_date monitorDate
+		FROM metro_line_interval_md md
+		LEFT JOIN metro_line_interval_sp sp ON sp.sp_name = md.md_no
+		LEFT JOIN metro_line_interval_md_re re ON md.md_re_id = re.id
+		WHERE sp.interval_id = #{intervalId}
+			AND sp.origin_mileage BETWEEN #{beginMessage} AND #{endMessage}
+			AND sp.left_or_right = #{leftOrRight}
+		ORDER BY md.monitor_date
+	</select>
+
+
+	<!-- 多个沉点在同一曲线(已修改) -->
+	<resultMap type="com.szgentech.metro.model.MonitorIntervalSettlementPoint" id="monitorIntervalDataPoint">
+		<result property="spSpeed" column="spSpeed" />
+		<result property="spName" column="spName" />
+		<result property="thisVar" column="thisVar" />
+		<result property="sumVar" column="sumVar" />
+		<result property="originMileage" column="originMileage" />
+		<result property="monitorDate" column="monitorDate" />
+	</resultMap>
+
+	<select id="findMonitorIntervalMonitorDataPoint" parameterType="java.util.HashMap" resultMap="monitorIntervalDataPoint">
+		select
+		COALESCE(tempB.thisVar/( TIMESTAMPDIFF(SECOND,tempC.monitorDate,tempB.monitorDate)
+		/60/60/24),tempB.thisVar) spSpeed,
+		tempB.spName ,
+		tempB.thisVar,
+		tempB.sumVar ,
+		tempB.originMileage ,
+		tempB.monitorDate
+		from (
+		select (@i := @i + 1) as tempId ,tempA.*
+		from
+		(select @i := 0) d,
+		(
+		SELECT
+		md.md_no spName,md.this_var thisVar,md.sum_var sumVar,sp.origin_mileage
+		originMileage,md.monitor_date monitorDate
+		from
+		metro_line_interval_md md LEFT JOIN metro_line_interval_sp sp
+		ON
+		sp.sp_name = md.md_no LEFT JOIN metro_line_interval_md_re re
+		ON
+		md.md_re_id = re.id
+
+		WHERE
+		sp.interval_id = #{intervalId}
+		AND
+		sp.left_or_right = #{leftOrRight}
+		order by
+		sp.sp_name, md.monitor_date asc
+		) as tempA
+		) as tempB left join
+		( select (@j := @j + 1) as tempId ,tempD.*
+		from
+		(select @j := 0) d,
+		(
+		SELECT
+		md.md_no spName,md.this_var thisVar,md.sum_var sumVar,sp.origin_mileage
+		originMileage,md.monitor_date monitorDate
+		from
+		metro_line_interval_md md LEFT JOIN metro_line_interval_sp sp
+		ON
+		sp.sp_name = md.md_no LEFT JOIN metro_line_interval_md_re re
+		ON
+		md.md_re_id = re.id
+		WHERE
+		sp.interval_id = #{intervalId}
+		AND
+		sp.left_or_right = #{leftOrRight}
+		order by
+		sp.sp_name, md.monitor_date asc
+		) as tempD)
+		as tempC
+		on
+		tempB.spName = tempC.spName
+		and
+		tempB.tempId = tempC.tempId +1
+		where
+		tempB.originMileage BETWEEN #{beginMessage} AND #{endMessage}
+		AND
+		date(tempB.monitorDate)= #{date}
+		order by
+		tempB.tempId asc
+	</select>
+
+
+	<select id="findPandectDao" parameterType="java.util.HashMap" resultMap="monitorCityResultMap">
+		SELECT DISTINCT
+			l.line_no, l.line_name,
+			i.interval_name, i.interval_mark, i.update_time,
+			lr.build_status, lr.left_or_right, lr.ring_num
+		FROM metro_line_interval i
+		LEFT JOIN metro_line_interval_lr lr ON i.id=lr.interval_id
+		LEFT JOIN metro_line l ON l.id = i.line_id
+		LEFT JOIN metro_city c ON c.id = l.city_id
+		LEFT JOIN metro_line li ON li.city_id = c.id
+		WHERE i.interval_name = #{intervalName}
+			AND lr.left_or_right = #{leftOrRight}
+			AND li.line_name = #{lineName}
+	</select>
+
+	<select id="findWarningLevel" parameterType="java.util.HashMap" resultType="com.szgentech.metro.model.MetroLineIntervalWarningRec">
+		SELECT rec.warning_level warninglevel
+		FROM metro_line_interval i
+		LEFT JOIN metro_line_interval_lr lr ON i.id=lr.interval_id
+		LEFT JOIN metro_line l ON l.id = i.line_id
+		LEFT JOIN metro_city c ON c.id = l.city_id
+		LEFT JOIN metro_line li ON li.city_id = c.id
+		LEFT JOIN metro_line_interval_warning_rec rec ON rec.interval_id = i.id
+		WHERE i.interval_name = #{intervalName}
+			AND lr.left_or_right =#{leftOrRight}
+			AND li.line_name = #{lineName}
+			AND rec.warning_time BETWEEN #{starttime} AND #{endtime}
+	</select>
+
+</mapper>

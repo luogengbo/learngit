@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.szgentech.metro.dao.IMetroLineIntervalMdReDao">
+<resultMap id="lineIntervalMdReResultMap" type="com.szgentech.metro.model.MetroLineIntervalMdRe" >
+	<id property="id" column="id"/>
+	<result property="intervalId" column="interval_id"/>
+	<result property="fileName" column="file_name"/>
+	<result property="originFileName" column="origin_file_name"/>
+	<result property="monitorDate" column="monitor_date"/>
+	<result property="fileUrl" column="file_url"/>
+	<result property="isDel" column="is_del"/>
+	<result property="updateTime" column="update_time"/>
+	<result property="createTime" column="create_time"/>
+</resultMap>
+
+<insert id="insertObj" parameterType="com.szgentech.metro.model.MetroLineIntervalMdRe" useGeneratedKeys="true" keyProperty="id">
+	insert into metro_line_interval_md_re(interval_id,file_name,origin_file_name,monitor_date,file_url,is_del,create_time)
+	values(#{intervalId},#{fileName},#{originFileName},#{monitorDate},#{fileUrl},0,now())
+</insert>
+
+<update id="updateObj" parameterType="java.util.HashMap">
+	update metro_line_interval_md_re 
+	set update_time=now()
+	<if test="intervalId != null">
+	  ,interval_id=#{intervalId}
+	</if>
+	<if test="fileName != null">
+	  ,file_name=#{fileName}
+	</if>
+	<if test="monitorDate != null">
+	  ,monitor_date=#{monitorDate}
+	</if>
+	<if test="fileUrl != null">
+	  ,file_url=#{fileUrl}
+	</if>
+	<if test="isDel != null">
+	  ,is_del=#{isDel}
+	</if>
+	where id=#{intervalMdReId}
+</update>
+
+<update id="deleteObj" parameterType="java.util.HashMap">
+	update metro_line_interval_md_re set is_del=1 where id=#{intervalMdReId}
+</update>
+
+<select id="findObjById" parameterType="java.util.HashMap" resultMap="lineIntervalMdReResultMap">
+	select * from metro_line_interval_md_re where id=#{intervalMdReId}
+</select>
+
+<!-- 总记录数 -->
+<select id="countObjs" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+	select count(1) from metro_line_interval_md_re where is_del=0 
+	<if test="intervalId != null">
+		and interval_id=#{intervalId}
+	</if>
+</select>
+
+
+<!-- 按日期查询当天的最新监测日期(已修改) -->
+<select id="findDayTheLatestMonitorDate" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+	SELECT
+	   UNIX_TIMESTAMP(max(metro_line_interval_md.monitor_date))
+	FROM
+	   metro_line_interval_md_re,
+	   metro_line_interval_sp,
+	    metro_line_interval_md
+    WHERE
+	   metro_line_interval_sp.interval_id = metro_line_interval_md_re.interval_id
+	   AND
+	   metro_line_interval_md.md_re_id = metro_line_interval_md_re.id
+	   AND
+	    metro_line_interval_md_re.interval_id = #{intervalId}
+	  AND 
+	  metro_line_interval_sp.left_or_right = #{leftOrRight}
+	  AND 
+	  date(metro_line_interval_md.monitor_date)= #{date}
+</select>
+
+
+<!-- 分页查询(已修改) -->
+<select id="findObjsList" parameterType="java.util.HashMap" resultMap="lineIntervalMdReResultMap">
+	SELECT
+	    id,interval_id,file_name,origin_file_name,md.monitor_date,file_url,is_del,update_time,create_time
+    FROM
+	  metro_line_interval_md_re re 
+	LEFT JOIN
+	    (SELECT
+			md_re_id,max( monitor_date )  'monitor_date'
+		FROM
+			metro_line_interval_md
+		GROUP BY
+			md_re_id
+	    ) 
+   AS 
+      md 
+  ON
+	   re.id = md.md_re_id
+  WHERE
+	    is_del = 0
+	<if test="intervalId != null">
+		AND interval_id=#{intervalId}
+	</if>
+	LIMIT #{start},#{pageSize}
+</select>
+
+</mapper>

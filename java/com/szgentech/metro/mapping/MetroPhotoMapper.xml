@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.szgentech.metro.dao.IMetroPhotoDao">
+	<resultMap id="photoResultMap" type="com.szgentech.metro.model.MetroPhoto">
+		<id property="id" column="id" />
+		<result property="photoName" column="photo_name" />
+		<result property="photoUrl" column="photo_url" />
+		<result property="photoType" column="photo_type" />
+		<result property="updateTime" column="update_time" />
+		<result property="createTime" column="create_time" />
+	</resultMap>
+
+	<select id="countObjs" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+		SELECT count(1) FROM metro_photos
+		<if test="photoId!=null">
+			WHERE id=#{photoId}
+		</if>
+	</select>
+
+	<select id="findObjsList" parameterType="java.util.HashMap" resultMap="photoResultMap">
+		SELECT * FROM metro_photos
+		<if test="photoId!=null">
+			WHERE id=#{photoId}
+		</if>
+		LIMIT #{start},#{pageSize}
+	</select>
+
+	<delete id="deleteObj" parameterType="java.util.HashMap">
+		DELETE FROM metro_photos WHERE id=#{photoId}
+	</delete>
+
+	<insert id="insertObj" parameterType="com.szgentech.metro.model.MetroPhoto" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO metro_photos(photo_name, photo_url, photo_type)
+		VALUES (#{photoName}, #{photoUrl}, #{photoType})
+	</insert>
+
+	<update id="updateObj" parameterType="java.util.HashMap">
+		UPDATE metro_photos
+		SET photo_name=#{photoName},
+			photo_url=#{photoUrl},
+			photo_type=#{photoType}
+		WHERE id=#{photoId}
+	</update>
+
+	<select id="findByType" parameterType="int" resultMap="photoResultMap">
+		SELECT * FROM metro_photos WHERE photo_type=#{photoType}
+	</select>
+
+	<select id="findObjsListByIntervalId" parameterType="java.util.HashMap" resultMap="photoResultMap">
+		SELECT * FROM metro_photos p
+		INNER JOIN metro_line_interval_lr lr
+			ON (lr.cutter_photo_id=p.id OR lr.screw_photo_id=p.id OR lr.slurry_photo_id=p.id)
+		WHERE lr.interval_id=#{intervalId} AND lr.left_or_right=#{leftOrRight}
+	</select>
+
+	<select id="findKnifePhoto" parameterType="java.util.HashMap" resultMap="photoResultMap">
+		SELECT p.* FROM metro_photos p
+		INNER JOIN metro_line_interval_lr lr
+			ON lr.cutter_photo_id=p.id
+		WHERE lr.interval_id=#{intervalId} AND lr.left_or_right=#{leftOrRight}
+		LIMIT 1
+	</select>
+
+	<select id="findSpiralPhoto" parameterType="java.util.HashMap" resultMap="photoResultMap">
+		SELECT p.* FROM metro_photos p
+		INNER JOIN metro_line_interval_lr lr
+			ON lr.screw_photo_id=p.id
+		WHERE lr.interval_id=#{intervalId} AND lr.left_or_right=#{leftOrRight}
+		LIMIT 1
+	</select>
+
+	<select id="findSlurryPhoto" parameterType="java.util.HashMap" resultMap="photoResultMap">
+		SELECT p.* FROM metro_photos p
+		INNER JOIN metro_line_interval_lr lr
+			ON lr.slurry_photo_id=p.id
+		WHERE lr.interval_id=#{intervalId} AND lr.left_or_right=#{leftOrRight}
+		LIMIT 1
+	</select>
+</mapper>

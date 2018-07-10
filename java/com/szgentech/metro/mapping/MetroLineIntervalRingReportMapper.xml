@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.szgentech.metro.dao.IMetroLineIntervalRingReportDao">
+	<resultMap id="lineIntervalRingReportResultMap"
+		type="com.szgentech.metro.model.MetroLineIntervalRingReport">
+		<id property="id" column="id" />
+		<result property="intervalId" column="interval_id" />
+		<result property="leftOrRight" column="left_or_right" />
+		<result property="ringNum" column="ring_num" />
+		<result property="stroke" column="stroke" />
+		<result property="paramName" column="param_name" />
+		<result property="numValue" column="num_value" />
+		<result property="jobTime" column="job_time" />
+		<result property="updateTime" column="update_time" />
+		<result property="createTime" column="create_time" />
+	</resultMap>
+	
+	<resultMap id="RingStatisticsResultMap" type="com.szgentech.metro.model.RingStatistics">
+		<result property="intervalId" column="interval_id" />
+		<result property="leftOrRight" column="left_or_right" />
+		<result property="ringNum" column="ring_num" />
+		<result property="paramName" column="param_name" />
+		<result property="avgValue" column="avg_value" />
+		<result property="maxValue" column="max_value" />
+		<result property="minValue" column="min_value" />
+		<result property="sumValue" column="sum_value" />
+	</resultMap>
+
+	<!-- 批量插入 -->
+	<insert id="addRingReportBatch" parameterType="java.util.List">
+		insert into
+		metro_line_interval_ring_report(interval_id,left_or_right,ring_num,stroke,param_name,num_value,job_time,update_time,create_time)
+		values
+		<foreach collection="list" item="item" index="index"
+			separator=",">
+			(#{item.intervalId},#{item.leftOrRight},#{item.ringNum},#{item.stroke},#{item.paramName},#{item.numValue},#{item.jobTime},now(),now())
+		</foreach>
+	</insert>
+
+	<delete id="deleteRingReportBatch" parameterType="java.util.List">
+		delete from metro_line_interval_ring_report where id in
+		<foreach collection="list" item="id" separator="," open="("
+			close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+	<select id="findRingReport" parameterType="java.util.HashMap"
+		resultMap="lineIntervalRingReportResultMap">
+		select * from metro_line_interval_ring_report 
+		where 1 = 1
+		<if test="intervalId != null">
+			and interval_id=#{intervalId}
+		</if>
+		<if test="leftOrRight != null">
+			and left_or_right=#{leftOrRight}
+		</if>
+		<if test="ringNum != null">
+			and ring_num=#{ringNum}
+		</if>
+		<if test="paramNames != null ">
+			and param_name in 
+			<foreach collection="paramNames" item="paramName" separator="," open="("
+			close=")">
+				#{paramName}
+			</foreach>
+		</if>
+		order by param_name, stroke asc
+	</select>
+
+	<select id="findRingStatistics" parameterType="java.util.HashMap"
+		resultMap="RingStatisticsResultMap">
+		SELECT param_name, AVG(num_value) AS avg_value, MAX(num_value) AS max_value
+		, MIN(num_value) AS min_value, SUM(num_value) AS sum_value
+		FROM metro_line_interval_ring_report
+		WHERE 1 = 1
+		<if test="paramNames != null ">
+			and param_name in 
+			<foreach collection="paramNames" item="paramName" separator="," open="("
+			close=")">
+				#{paramName}
+			</foreach>
+		</if>
+		AND interval_id = #{intervalId}
+		AND left_or_right =#{leftOrRight}
+		AND ring_num = #{ringNum}
+		GROUP BY param_name
+	</select>
+
+	<select id="findRingTowParamReduce" parameterType="java.util.HashMap"
+		resultMap="lineIntervalRingReportResultMap">
+		SELECT a.interval_id, a.left_or_right, a.ring_num, a.stroke
+		, CONCAT(a.param_name, '-', b.param_name) AS param_name
+		, a.num_value - b.num_value AS num_value
+		FROM
+		metro_line_interval_ring_report a, metro_line_interval_ring_report b
+		WHERE a.interval_id = b.interval_id
+		AND a.left_or_right = b.left_or_right
+		AND a.ring_num = b.ring_num
+		AND a.stroke = b.stroke
+		AND a.param_name = #{paramName1}
+		AND b.param_name = #{paramName2}
+		AND a.interval_id = #{intervalId}
+		AND a.left_or_right = #{leftOrRight}
+		AND a.ring_num = #{ringNum}
+		ORDER BY a.stroke ASC
+	</select>
+
+</mapper>

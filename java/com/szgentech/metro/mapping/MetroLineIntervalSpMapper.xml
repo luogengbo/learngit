@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.szgentech.metro.dao.IMetroLineIntervalSpDao">
+	<resultMap id="lineIntervalSpResultMap" type="com.szgentech.metro.model.MetroLineIntervalSp" >
+		<id property="id" column="id"/>
+		<result property="intervalId" column="interval_id"/>
+		<result property="leftOrRight" column="left_or_right"/>
+		<result property="spName" column="sp_name"/>
+		<result property="originMileage" column="origin_mileage"/>
+		<result property="mapX" column="map_x"/>
+		<result property="mapY" column="map_y"/>
+		<result property="spSumAdd" column="sp_sum_add"/>
+		<result property="spSumSub" column="sp_sum_sub"/>
+		<result property="spSpeedWarningVal" column="sp_speed_warning_val"/>
+		<result property="updateTime" column="update_time"/>
+		<result property="createTime" column="create_time"/>
+	</resultMap>
+
+	<insert id="insertObj" parameterType="com.szgentech.metro.model.MetroLineIntervalSp" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO metro_line_interval_sp(interval_id, left_or_right, sp_name, origin_mileage, map_x, map_y, sp_sum_add, sp_sum_sub, sp_speed_warning_val)
+		VALUES(#{intervalId}, #{leftOrRight}, #{spName}, #{originMileage}, #{mapX}, #{mapY}, #{spSumAdd}, #{spSumSub}, #{spSpeedWarningVal})
+	</insert>
+
+	<update id="updateObj" parameterType="java.util.HashMap">
+		update metro_line_interval_sp 
+		set update_time=now()
+		<if test="intervalId != null">
+		  ,interval_id=#{intervalId}
+		</if>
+		<if test="leftOrRight != null">
+		  ,left_or_right=#{leftOrRight}
+		</if>
+		<if test="spName != null">
+		  ,sp_name=#{spName}
+		</if>
+		<if test="originMileage != null">
+		  ,origin_mileage=#{originMileage}
+		</if>
+		<if test="mapX != null">
+		  ,map_x=#{mapX}
+		</if>
+		<if test="mapY != null">
+		  ,map_y=#{mapY}
+		</if>
+		<if test="spSumAdd != null">
+		  ,sp_sum_add=#{spSumAdd}
+		</if>
+		<if test="spSumSub != null">
+		  ,sp_sum_sub=#{spSumSub}
+		</if>
+		<if test="spSpeedWarningVal != null">
+		  ,sp_speed_warning_val=#{spSpeedWarningVal}
+		</if>
+		where id=#{intervalSpId}
+	</update>
+	
+	<delete id="deleteObj" parameterType="java.util.HashMap">
+		delete from metro_line_interval_sp where id=#{intervalSpId}
+	</delete>
+	
+	<select id="findObjById" parameterType="java.util.HashMap" resultMap="lineIntervalSpResultMap">
+		SELECT *
+		FROM metro_line_interval_sp
+		WHERE id=#{intervalSpId}
+	</select>
+	
+	<!-- 总记录数 -->
+	<select id="countObjs" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+		SELECT count(1)
+		FROM metro_line_interval_sp
+		<where> 
+			<if test="intervalId != null">
+				interval_id=#{intervalId}
+			</if>
+		</where>
+	</select>
+	
+	<!-- 分页查询 -->
+	<select id="findObjsList" parameterType="java.util.HashMap" resultMap="lineIntervalSpResultMap">
+		SELECT *
+		FROM metro_line_interval_sp
+		<where>
+			<if test="intervalId != null">
+				interval_id=#{intervalId}
+			</if>
+		</where>
+		LIMIT #{start}, #{pageSize}
+	</select>
+	
+	<select id="findLineIntervalSps" parameterType="java.util.HashMap" resultMap="lineIntervalSpResultMap">
+		SELECT *
+		FROM metro_line_interval_sp
+		<where>
+			<if test="intervalId!=null">
+				interval_id=#{intervalId}
+			</if>
+		</where>
+	</select>
+	
+	<select id="findUniqueData" parameterType="java.util.HashMap" resultMap="lineIntervalSpResultMap">
+		SELECT *
+		FROM metro_line_interval_sp
+		WHERE interval_id=#{intervalId}
+			AND sp_name=#{spName}
+	</select>
+</mapper>

@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.szgentech.metro.dao.ISysRightDao">
+	<resultMap type="com.szgentech.metro.model.MetroRole" id="rolesResultMap">
+		<id property="id" column="role_id" />
+		<result property="roleName" column="role_name" />
+		<collection property="menus" javaType="java.util.List"
+			ofType="com.szgentech.metro.model.MetroSysMenu">
+			<id property="id" column="m_id" />
+			<result property="menuName" column="menu_name" />
+			<result property="menuUrl" column="menu_url" />
+			<result property="level" column="level" />
+			<result property="menuLogUrl" column="menu_log_url" />
+			<collection property="childMenus" javaType="java.util.List"
+				ofType="com.szgentech.metro.model.MetroSysMenu">
+				<id property="id" column="mc_id" />
+				<result property="menuName" column="menu_name2" />
+				<result property="menuUrl" column="menu_url2" />
+				<result property="level" column="level2" />
+				<result property="menuLogUrl" column="menu_log_url2" />
+			</collection>
+		</collection>
+	</resultMap>
+
+	<select id="findRoleRightMenus" parameterType="java.util.HashMap"
+		resultMap="rolesResultMap">
+		SELECT
+			r.id role_id, r.role_name, m1.id m_id,
+			m1.menu_name,m1.menu_url, m1.level, m1.menu_log_url,
+			m2.id mc_id, m2.menu_name menu_name2, m2.menu_url menu_url2,
+			m2.level level2, m2.menu_log_url menu_log_url2
+		FROM (SELECT * from metro_sys_menu WHERE level=1) m1
+		INNER JOIN metro_sys_menu m2 ON m1.id=m2.parent_id
+		<if test="roleId!=1">
+			INNER JOIN metro_role_menu_rel re ON re.menu_id=m2.id
+			<if test="roleId!=null">
+				AND re.role_id=#{roleId}
+			</if>
+			INNER JOIN metro_role r ON re.role_id=r.id
+		</if>
+		<if test="roleId==1">
+			INNER JOIN (SELECT * FROM metro_role WHERE id=1) r ON 1=1
+		</if>
+		ORDER BY r.id, m1.id, m2.id
+	</select>
+
+	<resultMap type="com.szgentech.metro.model.MetroUser" id="usersResultMap">
+		<id property="id" column="u_id" />
+		<result property="username" column="username" />
+		<association property="city" javaType="com.szgentech.metro.model.MetroCity">
+			<id property="id" column="c_id" />
+			<result property="cityName" column="city_name" />
+			<result property="projectPdfUrl" column="c_project_pdf_url" />
+			<collection property="lineList" javaType="java.util.List"
+				ofType="com.szgentech.metro.model.MetroLine">
+				<id property="id" column="l_id" />
+				<result property="lineName" column="line_name" />
+				<result property="lineNo" column="line_no" />
+				<result property="lineColor" column="line_color" />
+				<result property="mapX" column="map_x" />
+				<result property="mapY" column="map_y" />
+				<result property="projectPdfUrl" column="l_project_pdf_url" />
+				<collection property="intervalList" javaType="java.util.List"
+					ofType="com.szgentech.metro.model.MetroLineInterval">
+					<id property="id" column="i_id" />
+					<result property="intervalMark" column="interval_mark" />
+					<result property="intervalName" column="interval_name" />
+					<result property="imgMapXyUrl" column="img_map_xy_url" />
+					<result property="projectPdfUrl" column="i_project_pdf_url" />
+					<collection property="intervalLrList" javaType="java.util.List"
+						ofType="com.szgentech.metro.model.MetroLineIntervalLr">
+						<id property="id" column="lr_id" />
+						<result property="leftOrRight" column="left_or_right" />
+						<result property="ringNum" column="ring_num" />
+						<result property="buildStatus" column="build_status" />
+						<result property="buildDate" column="build_date" />
+						<result property="throughDate" column="through_date" />
+						<result property="intervalColor" column="interval_color" />
+						<result property="mapXy" column="map_xy" />
+						<result property="machineNo" column="machine_no" />
+						<result property="machineCompany" column="machine_company" />
+						<result property="machineType" column="machine_type" />
+						<result property="machineProductDate" column="machine_product_date" />
+						<result property="machineContractor" column="machine_contractor" />
+						<result property="machineReviewDate" column="machine_review_date" />
+					</collection>
+				</collection>
+			</collection>
+		</association>
+	</resultMap>
+
+	<select id="findUserRightDatas" parameterType="java.util.HashMap"
+		resultMap="usersResultMap">
+		SELECT
+			u.id u_id, u.username, c.id c_id, c.city_name, c.project_pdf_url c_project_pdf_url,
+			l.id l_id, l.line_name, l.line_no, l.line_color, l.map_x, l.map_y,l.project_pdf_url l_project_pdf_url,
+			i.id i_id, i.interval_name, i.img_map_xy_url, i.project_pdf_url i_project_pdf_url, i.interval_mark,
+			lr.id lr_id, lr.left_or_right, lr.ring_num, lr.build_status, lr.build_date, lr.through_date,
+			lr.interval_color, lr.map_xy, lr.machine_no, lr.machine_company, lr.machine_type,
+			lr.machine_product_date, lr.machine_contractor, lr.machine_review_date
+		FROM metro_city c
+		INNER JOIN metro_line l ON c.id=l.city_id AND l.line_status=1
+		INNER JOIN metro_line_interval i ON l.id=i.line_id AND i.`status`=1
+		INNER JOIN metro_line_interval_lr lr ON i.id=lr.interval_id
+		<if test="userId!=1">
+			INNER JOIN (SELECT * FROM metro_user_data_rel
+			<if test="userId!=null">
+				WHERE user_id=#{userId}
+			</if>
+			) re ON i.id=re.interval_id AND lr.left_or_right=re.left_or_right
+			INNER JOIN metro_user u ON u.id=re.user_id AND u.is_del=0
+		</if>
+		<if test="userId==1">
+			INNER JOIN (SELECT * FROM metro_user WHERE id=1) u ON 1=1 AND u.is_del=0
+		</if>
+	</select>
+	
+		<select id="findLineIntervalLr" parameterType="java.util.HashMap" resultType="com.szgentech.metro.model.MetroLineIntervalLr">
+		SELECT DISTINCT
+			lr.id id, lr.interval_id intervalid, lr.left_or_right leftorright, lr.ring_num ringnum, lr.build_status buildstatus,lr.status status, lr.build_date builddate,
+			lr.through_date throughdate, lr.interval_color intervalcolor, lr.map_xy mapxy, lr.machine_no machineno, lr.machine_company machinecompany, lr.machine_type machinetype,
+			lr.machine_product_date machineproductdate, lr.machine_contractor machinecontractor, lr.machine_review_date machinereviewdate, lr.remark remark,
+			lr.cutter_photo_id cutterphotoid, lr.screw_photo_id screwphotoid, lr.is_del isdel, lr.update_time updatetime, lr.create_time createtime, lr.slurry_photo_id slurryphotoid
+		FROM metro_line_interval val
+		LEFT JOIN metro_line_interval_lr lr ON lr.interval_id = val.id
+		LEFT JOIN metro_line l ON val.line_id = l.id
+		LEFT JOIN metro_city city ON l.city_id = city.id
+		LEFT JOIN metro_user_data_rel rel ON rel.city_id = city.id
+		<where>
+			l.line_name = #{linename} and val.interval_name = #{intervalname} and lr.left_or_right = #{leftorright}
+		</where>
+	</select>
+	
+	
+	<select id="findCircuitUserId" parameterType="java.util.HashMap" resultType="com.szgentech.metro.model.MetroLine">
+		SELECT 
+			DISTINCT l.id id,l.city_id cityid,l.line_no lineon,
+			l.line_name linename,l.line_color linecolor,l.line_status linestatus,
+			l.map_x mapx,l.map_y mapy,l.project_pdf_url projectpdfurl,l.remark remark,
+			l.update_time updatetime,l.create_time createtime 
+		FROM metro_line l
+		LEFT JOIN metro_city city ON l.city_id = city.id
+		LEFT JOIN metro_user_data_rel rel ON rel.city_id = city.id
+		LEFT JOIN metro_user us ON us.id = rel.user_id
+		WHERE us.id = #{userId}
+	</select>
+	
+	
+	<select id="findIntervaliLR" parameterType="java.util.HashMap" resultType="com.szgentech.metro.model.MetroLineIntervaliLR">
+		SELECT DISTINCT
+			val.id id,val.interval_name intervalname,lr.left_or_right leftorright
+		FROM metro_line_interval val
+		LEFT JOIN metro_line_interval_lr lr ON lr.interval_id = val.id
+		LEFT JOIN metro_line l ON val.line_id = l.id
+		LEFT JOIN metro_city city ON l.city_id = city.id
+		LEFT JOIN metro_user_data_rel rel ON rel.city_id = city.id
+		LEFT JOIN metro_user us ON us.id = rel.user_id
+		WHERE us.id = #{userId} and l.line_name = #{linename}
+	</select>
+	
+	
+	<resultMap type="com.szgentech.metro.model.Homepage" id="HomepageMap">
+	<id column="id" property="id"/>
+	<result column="linename" property="linename"/>
+		<collection property="intervaliLR" javaType="java.util.List" 
+			ofType="com.szgentech.metro.model.MetroLineIntervaliLR">
+			<result column="intervalid" property="id"/>
+			<result column="intervalname" property="intervalname"/>
+			<result column="leftorright" property="leftorright"/>
+		</collection>
+	</resultMap>
+	
+	<select id="findHomepage" parameterType="java.util.HashMap" resultMap="HomepageMap">
+		SELECT
+			l.id id,l.line_name linename,
+			i.interval_name intervalname,lr.interval_id intervalid,lr.left_or_right leftorright
+		FROM metro_city c
+		INNER JOIN metro_line l ON c.id=l.city_id AND l.line_status=1
+		INNER JOIN metro_line_interval i ON l.id=i.line_id AND i.`status`=1
+		INNER JOIN metro_line_interval_lr lr ON i.id=lr.interval_id
+		INNER JOIN metro_user_data_rel re ON i.id=re.interval_id AND lr.left_or_right=re.left_or_right
+		INNER JOIN metro_user u ON u.id=re.user_id AND u.is_del=0
+		WHERE re.user_id = #{userId}
+	</select>
+</mapper>

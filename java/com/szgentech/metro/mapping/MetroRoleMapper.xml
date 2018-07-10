@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.szgentech.metro.dao.IMetroRoleDao">
+<resultMap id="roleResultMap" type="com.szgentech.metro.model.MetroRole" >
+	<id property="id" column="id"/>
+	<result property="roleCode" column="role_code"/>
+	<result property="roleName" column="role_name"/>
+	<result property="isUsed" column="is_used"/>
+	<result property="roleDescribe" column="role_describe"/>
+	<collection property="menuRightList" javaType="java.util.List" ofType="com.szgentech.metro.model.MetroRoleMenuRel">
+		<result property="roleId" column="role_id"/>
+		<result property="menuId" column="menu_id"/>
+	</collection>
+</resultMap>
+
+<insert id="insertObj" parameterType="com.szgentech.metro.model.MetroRole" useGeneratedKeys="true" keyProperty="id">
+	INSERT INTO metro_role(role_code,role_name,is_used,role_describe,create_time)
+	VALUES(#{roleCode},#{roleName},#{isUsed},#{roleDescribe},NOW())
+</insert>
+
+
+<update id="updateObj" parameterType="java.util.HashMap">
+	UPDATE metro_role 
+	set 
+		role_code=#{roleCode},
+		role_name=#{roleName},
+		is_used=#{isUsed},
+		role_describe=#{roleDescribe}		
+	WHERE id=#{roleId}
+</update>
+	
+<delete id="deleteObj" parameterType="java.util.HashMap">
+	delete from metro_role where id=#{roleId}
+</delete>
+
+<!-- 总记录数 -->
+<select id="countObjs" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+	select count(1) from metro_role
+</select>
+
+<!-- 分页查询 -->
+<select id="findObjsList" parameterType="java.util.HashMap" resultMap="roleResultMap">
+	SELECT 
+		r.id,role_code,role_name,is_used,role_describe,role_id,menu_id 
+	FROM (select * from metro_role LIMIT #{start},#{pageSize}) r
+	LEFT JOIN metro_role_menu_rel re ON r.id=re.role_id
+	
+</select>
+
+<insert id="addRoleAndMenuRel" parameterType="java.util.HashMap">
+	INSERT INTO metro_role_menu_rel(role_id,menu_id)
+	VALUES
+	<foreach collection="menuIds" item="menuId" separator=",">
+		(#{roleId},#{menuId})
+	</foreach>	
+</insert>
+
+<delete id="delRoleAndMenuRel" parameterType="java.util.HashMap">
+	DELETE FROM metro_role_menu_rel WHERE role_id=#{roleId}
+</delete>
+
+<select id="findObjById" parameterType="java.util.HashMap" resultMap="roleResultMap">
+	SELECT 
+		r.id,role_code,role_name,is_used,role_describe,role_id,menu_id 
+	FROM (select * from metro_role where id=#{roleId}) r
+	LEFT JOIN metro_role_menu_rel re ON r.id=re.role_id
+</select>
+
+<resultMap id="rolesResultMap" type="com.szgentech.metro.model.MetroRole" >
+	<id property="id" column="id"/>
+	<result property="roleCode" column="role_code"/>
+	<result property="roleName" column="role_name"/>
+	<result property="isUsed" column="is_used"/>
+	<result property="roleDescribe" column="role_describe"/>
+</resultMap>
+<select id="findAllRoleInfo" resultMap="rolesResultMap">
+	select * from metro_role where role_code!='R001'
+</select>
+</mapper>

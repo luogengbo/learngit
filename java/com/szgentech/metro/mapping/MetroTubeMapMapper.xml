@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.szgentech.metro.dao.IMetroTubeMapDao">
+<resultMap type="com.szgentech.metro.model.TubeMapInfo" id="tubeResultMap">
+	<result property="lineNo" column="line_no"/>
+	<result property="intervalMark" column="interval_mark"/>
+	<result property="buildStatus" column="build_status"/>
+	<result property="leftOrRight" column="left_or_right"/>
+	<result property="numValue" column="num_value"/>
+	<result property="warningLevel" column="warning_level"/>
+	<result property="dicMean" column="dic_mean"/>
+	<result property="dicUnit" column="dic_unit"/>
+</resultMap>
+
+<select id="findTubeMapInfo" parameterType="java.util.HashMap" resultMap="tubeResultMap">
+	SELECT l.line_no, i.interval_mark, lr.build_status, lr.left_or_right, re.num_value, re.warning_level, 
+			dic.dic_mean, dic.dic_unit
+	FROM (SELECT * FROM metro_line_interval WHERE id=#{intervalId}) i
+	INNER JOIN metro_line l ON i.line_id=l.id
+	INNER JOIN metro_line_interval_lr lr ON i.id=lr.interval_id
+	LEFT JOIN (SELECT r.* 
+				FROM metro_line_interval_warning_rec r
+				WHERE r.interval_id=#{intervalId} 
+						AND r.warning_time>date_sub(NOW(), interval '0 00:10:00' day_second)
+						AND r.warning_time=(
+							SELECT MAX(warning_time) 
+							FROM metro_line_interval_warning_rec r1 
+							WHERE r1.interval_id=#{intervalId} 
+								AND r.left_or_right=r1.left_or_right)
+	) re ON lr.interval_id=re.interval_id AND lr.left_or_right=re.left_or_right
+	LEFT JOIN metro_dictionary dic ON re.param_name=dic_name
+</select>
+</mapper>

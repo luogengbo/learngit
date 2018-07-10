@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.szgentech.metro.dao.IMetroLineIntervalDao">
+	<resultMap id="lineIntervalResultMap" type="com.szgentech.metro.model.MetroLineInterval">
+		<id property="id" column="id" />
+		<result property="lineId" column="line_id" />
+		<result property="intervalMark" column="interval_mark" />
+		<result property="intervalName" column="interval_name" />
+		<result property="status" column="status" />
+		<result property="projectPdfUrl" column="project_pdf_url" />
+		<result property="imgMapXyUrl" column="img_map_xy_url" />
+		<result property="riskPdfUrl" column="risk_pdf_url" />
+		<result property="remark" column="remark" />
+		<result property="surveyPdfUrl" column="survey_pdf_url" />
+		<result property="updateTime" column="update_time" />
+		<result property="createTime" column="create_time" />
+		<result property="parameterPdfUrl" column="parameter_pdf_url" />
+		<collection property="intervalDataList" column="id" ofType="com.szgentech.metro.model.MetroLineIntervalData" select="com.szgentech.metro.dao.IMetroLineIntervalDataDao.findObjsForLineInterval" />
+		<collection property="intervalLrList" column="id" ofType="com.szgentech.metro.model.MetroLineIntervalLr" select="com.szgentech.metro.dao.IMetroLineIntervalLrDao.findObjsForLineInterval" />
+	</resultMap>
+
+	<select id="findObjsForLine" parameterType="long" resultMap="lineIntervalResultMap">
+		SELECT *
+		FROM metro_line_interval
+		WHERE line_id=#{lineId}
+	</select>
+
+	<insert id="insertObj" parameterType="com.szgentech.metro.model.MetroLineInterval" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO metro_line_interval
+			(line_id,interval_mark,interval_name,status,project_pdf_url,img_map_xy_url,remark,parameter_pdf_url)
+		VALUES(#{lineId},#{intervalMark},#{intervalName},#{status},#{projectPdfUrl},#{imgMapXyUrl},#{remark},#{parameterPdfUrl})
+	</insert>
+
+	<update id="updateObj" parameterType="java.util.HashMap">
+		UPDATE metro_line_interval
+		SET update_time=now()
+		<if test="lineId != null">
+			,line_id=#{lineId}
+		</if>
+		<if test="intervalMark != null">
+			,interval_mark=#{intervalMark}
+		</if>
+		<if test="intervalName != null">
+			,interval_name=#{intervalName}
+		</if>
+		<if test="status != null">
+			,status=#{status}
+		</if>
+		<if test="projectPdfUrl != null">
+			,project_pdf_url=#{projectPdfUrl}
+		</if>
+		<if test="imgMapXyUrl != null">
+			,img_map_xy_url=#{imgMapXyUrl}
+		</if>
+		<if test="remark != null">
+			,remark=#{remark}
+		</if>
+		<if test="parameterPdfUrl != null">
+			,parameter_pdf_url=#{parameterPdfUrl}
+		</if>
+		WHERE id=#{intervalId}
+	</update>
+
+	<delete id="deleteObj" parameterType="java.util.HashMap">
+		DELETE FROM metro_line_interval
+		WHERE id=#{intervalId}
+	</delete>
+
+	<select id="findObjById" parameterType="java.util.HashMap" resultMap="lineIntervalResultMap">
+		SELECT *
+		FROM metro_line_interval
+		WHERE id=#{intervalId}
+	</select>
+
+	<!--修改风险组段划分文档url -->
+	<update id="editRiskPdfUrl" parameterType="java.util.HashMap">
+		UPDATE metro_line_interval
+		SET risk_pdf_url=#{riskPdfUrl}
+		WHERE id=#{intervalId}
+	</update>
+
+	<!--修改地质详勘文档url -->
+	<update id="editSurveyPdfUrl" parameterType="java.util.HashMap">
+		UPDATE metro_line_interval
+		SET survey_pdf_url=#{surveyPdfUrl}
+		WHERE id=#{intervalId}
+	</update>
+
+</mapper>

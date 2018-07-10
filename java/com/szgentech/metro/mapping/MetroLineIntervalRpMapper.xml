@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.szgentech.metro.dao.IMetroLineIntervalRpDao">
+<resultMap id="lineIntervalRpResultMap" type="com.szgentech.metro.model.MetroLineIntervalRp" >
+	<id property="id" column="id"/>
+	<result property="intervalId" column="interval_id"/>
+	<result property="positionNo" column="position_no"/>
+	<result property="leftOrRight" column="left_or_right"/>
+	<result property="gType" column="g_type"/>
+	<result property="textMsg" column="text_msg"/>
+	<result property="riskImgUrl" column="risk_img_url"/>
+	<result property="riskPdf1Url" column="risk_pdf1_url"/>
+	<result property="riskPdf2Url" column="risk_pdf2_url"/>
+	<result property="riskPdf3Url" column="risk_pdf3_url"/>
+	<result property="updateTime" column="update_time"/>
+	<result property="createTime" column="create_time"/>
+	<result property="riskX" column="risk_x"/>
+	<result property="riskY" column="risk_y"/>
+	<result property="riskHight" column="risk_hight"/>
+	<result property="riskWidth" column="risk_width"/>
+</resultMap>
+
+<insert id="insertObj" parameterType="com.szgentech.metro.model.MetroLineIntervalRp" useGeneratedKeys="true" keyProperty="id">
+	insert into metro_line_interval_rp(interval_id,position_no,left_or_right,g_type,risk_x,risk_y,risk_hight,risk_width,create_time)
+	values(#{intervalId},#{positionNo},#{leftOrRight},#{gType},#{riskX},#{riskY},#{riskHight},#{riskWidth},now())
+</insert>
+
+<update id="updateObj" parameterType="java.util.HashMap">
+	update metro_line_interval_rp
+	set update_time=now()
+	<if test="intervalId != null">
+	  ,interval_id=#{intervalId}
+	</if>
+	<if test="positionNo != null">
+	  ,position_no=#{positionNo}
+	</if>
+	<if test="leftOrRight != null">
+	  ,left_or_right=#{leftOrRight}
+	</if>
+	<if test="gType != null">
+	  ,g_type=#{gType}
+	</if>
+	<if test="textMsg != null">
+	  ,text_msg=#{textMsg}
+	</if>
+	<if test="riskImgUrl != null">
+	  ,risk_img_url=#{riskImgUrl}
+	</if>
+
+	<if test="riskPdf1Url != null">
+	  ,risk_pdf1_url=#{riskPdf1Url}
+	</if>
+	<if test="riskPdf2Url != null">
+	  ,risk_pdf2_url=#{riskPdf2Url}
+	</if>
+	<if test="riskPdf3Url != null">
+	  ,risk_pdf3_url=#{riskPdf3Url}
+	</if>
+	where id=#{intervalRpId}
+</update>
+
+	<update id="updatePdf" parameterType="java.util.HashMap">
+		update metro_line_interval_rp
+		set update_time=now()
+		<if test="riskPdf1Url != null">
+			,risk_pdf1_url=#{riskPdf1Url}
+		</if>
+		<if test="riskPdf1Url == null">
+			,risk_pdf1_url=null
+		</if>
+		<if test="riskPdf2Url != null">
+			,risk_pdf2_url=#{riskPdf2Url}
+		</if>
+		<if test="riskPdf2Url == null">
+			,risk_pdf2_url=null
+		</if>
+		<if test="riskPdf3Url != null">
+			,risk_pdf3_url=#{riskPdf3Url}
+		</if>
+		<if test="riskPdf3Url == null">
+			,risk_pdf3_url=null
+		</if>
+		where id=#{intervalRpId}
+	</update>
+
+<delete id="deleteObj" parameterType="java.util.HashMap">
+	delete from metro_line_interval_rp where id=#{intervalRpId}
+</delete>
+
+<select id="findObjById" parameterType="java.util.HashMap" resultMap="lineIntervalRpResultMap">
+	select * from metro_line_interval_rp where id=#{intervalRpId}
+</select>
+
+<!-- 总记录数 -->
+<select id="countObjs" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+	select count(1) from metro_line_interval_rp
+	<if test="intervalId != null">
+		where interval_id=#{intervalId}
+	</if>
+</select>
+
+	<!-- 分页查询 -->
+<select id="findObjsList" parameterType="java.util.HashMap" resultMap="lineIntervalRpResultMap">
+	select * from metro_line_interval_rp
+	<if test="intervalId != null">
+		where interval_id=#{intervalId}
+	</if>
+	<if test="start != null">
+		limit #{start},#{pageSize}
+	</if>
+</select>
+
+</mapper>

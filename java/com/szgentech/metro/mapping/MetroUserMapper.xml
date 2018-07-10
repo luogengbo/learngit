@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.szgentech.metro.dao.IMetroUserDao">
+	<resultMap id="userResultMap" type="com.szgentech.metro.model.MetroUser" >
+		<id property="id" column="id"/>
+		<result property="roleId" column="role_id"/>
+		<result property="username" column="username"/>
+		<result property="name" column="name"/>
+		<result property="sex" column="sex"/>
+		<result property="isUsed" column="is_used"/>
+		<result property="loginTime" column="login_time"/>
+		<result property="loginIp" column="login_ip"/>
+		<result property="onlineStatus" column="online_status"/>
+		<result property="createTime" column="create_time"/>
+		<result property="phoneNo" column="phone_no"/>
+		<result property="founder" column="founder"/>
+		<association property="role" javaType="com.szgentech.metro.model.MetroRole">
+			<result property="roleName" column="role_name"/>
+			<result property="roleCode" column="role_code"/>
+		</association>	
+		<collection property="deptList" javaType="java.util.List" ofType="com.szgentech.metro.model.MetroDept">
+			<id property="id" column="dept_id"/>
+		</collection>
+	</resultMap>
+
+	<insert id="insertObj" parameterType="com.szgentech.metro.model.MetroUser" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO metro_user(role_id, username, password, name, is_del, is_used, phone_no, founder, create_time)
+		VALUES(#{roleId}, #{username}, #{password}, #{name}, 0, 1, #{phoneNo}, #{founder}, NOW())
+	</insert>
+
+	<!-- 修改用户信息开始 begin-->
+	<!-- 更新用户信息 -->
+	<update id="updateObj" parameterType="java.util.HashMap">
+		UPDATE metro_user
+		SET
+			username=#{username},
+			name=#{name},
+			role_id=#{roleId},
+			phone_no=#{phoneNo}	
+		WHERE id=#{userId}
+	</update>
+
+	<!-- 删除用户部门关系 -->
+	<delete id="delUserDeptRel" parameterType="java.util.HashMap">
+		DELETE FROM metro_user_dept_rel
+		WHERE user_id=#{userId} AND dept_id IN(
+			<foreach collection="deptIds" item="id" separator=",">
+				#{id}
+			</foreach>
+		)
+	</delete>
+
+	<!-- 添加用户部门关系 -->
+	<insert id="addUserDeptRel" parameterType="java.util.HashMap">
+		INSERT INTO metro_user_dept_rel(dept_id, user_id)
+		VALUES
+			<foreach collection="deptIds" item="deptId" separator=",">
+				(#{deptId}, #{userId})
+			</foreach>
+	</insert>
+	<!-- 修改用户信息结束 end-->
+
+	<!-- 逻辑删除 -->
+	<update id="deleteObj" parameterType="java.util.HashMap">
+		UPDATE metro_user SET is_del=1 WHERE id=#{userId}
+	</update>
+
+	<delete id="deleteObjDeptRel" parameterType="java.util.HashMap">
+		DELETE FROM metro_user_dept_rel WHERE user_id=#{userId} AND dept_id=#{deptId}
+	</delete>
+
+	<select id="findObjById" parameterType="java.util.HashMap" resultMap="userResultMap">
+		SELECT u.*, r.role_name, r.role_code, dr.dept_id
+		FROM metro_user u
+		INNER JOIN metro_role r ON u.role_id=r.id
+		INNER JOIN metro_user_dept_rel dr ON u.id=dr.user_id
+		WHERE u.is_del=0
+		<if test="userId!=null">
+			AND u.id=#{userId}
+		</if>
+	</select>
+
+	<!-- 总记录数 -->
+	<select id="countObjs" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+		SELECT count(*)
+		FROM metro_user u
+		INNER JOIN metro_role r ON u.role_id=r.id
+		INNER JOIN metro_user_dept_rel dr ON u.id=dr.user_id
+		WHERE u.is_del=0
+		<if test="name != null">
+			AND (u.name LIKE concat('%', #{name}, '%') OR u.username LIKE concat('%', #{name}, '%'))
+		</if>
+		<if test="deptId!=null">
+			AND dr.dept_id=#{deptId}
+		</if>
+	</select>
+
+	<!-- 分页查询 -->
+	<select id="findObjsList" parameterType="java.util.HashMap" resultMap="userResultMap">
+		SELECT u.*, r.role_name, r.role_code, dr.dept_id
+		FROM metro_user u
+		INNER JOIN metro_role r ON u.role_id=r.id
+		INNER JOIN metro_user_dept_rel dr ON u.id=dr.user_id
+		WHERE u.is_del=0
+		<if test="name != null">
+			AND (u.name LIKE concat('%', #{name}, '%') OR u.username LIKE concat('%', #{name}, '%'))
+		</if>
+		<if test="deptId!=null">
+			AND dr.dept_id=#{deptId}
+		</if>
+		ORDER BY create_time DESC
+		LIMIT #{start}, #{pageSize}
+	</select>
+
+	<!-- 修改密码 -->
+	<update id="editUserPassword" parameterType="java.util.HashMap" >
+		UPDATE metro_user SET password=#{password} WHERE id=#{userId}
+	</update>
+
+	<select id="findMetroUserUsername" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+		SELECT count(1) FROM metro_user WHERE username=#{username} AND is_del=0
+	</select>
+
+	<resultMap id="userResultMapr" type="com.szgentech.metro.model.MetroUser" >
+		<id property="id" column="id"/>
+		<result property="roleId" column="role_id"/>
+		<result property="username" column="username"/>
+		<result property="name" column="name"/>
+		<result property="isUsed" column="is_used"/>
+		<result property="sex" column="sex"/>
+		<result property="phoneNo" column="phone_no"/>
+		<result property="founder" column="founder"/>
+		<result property="createTime" column="create_time"/>
+	</resultMap>
+
+	<!-- 用户实体总记录数 -->
+	<select id="countObjsr" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+		SELECT count(1) FROM metro_user WHERE is_del=0
+		<if test="name != null">
+			AND (u.name LIKE concat('%', #{name}, '%') OR u.username LIKE concat('%', #{name}, '%'))
+		</if>
+	</select>
+
+	<!-- 用户实体分页查询 -->
+	<select id="findObjsListr" parameterType="java.util.HashMap" resultMap="userResultMapr">
+		SELECT *
+		FROM metro_user u
+		WHERE is_del=0
+		<if test="name != null">
+			AND (u.name LIKE concat('%', #{name}, '%') OR u.username LIKE concat('%', #{name}, '%'))
+		</if>
+		ORDER BY create_time DESC
+		LIMIT #{start}, #{pageSize}
+	</select>
+
+	<!-- 根据部门ID查询所有用户信息 -->
+	<select id="findAllUserByDeptId" parameterType="java.util.HashMap" resultMap="userResultMapr">
+		SELECT u.*
+		FROM metro_user u, metro_user_dept_rel r
+		WHERE u.id = r.user_id
+			AND r.dept_id = #{deptId}
+			AND u.is_del = '0'
+	</select>
+
+</mapper>

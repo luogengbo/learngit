@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.szgentech.metro.dao.IMetroOperateDao">
+	<resultMap id="operateResultMap" type="com.szgentech.metro.model.MetroUserOperateRec">
+		<id property="id" column="id" />
+		<result property="userId" column="user_id" />
+		<result property="username" column="username" />
+		<result property="visitMenu" column="visit_menu" />
+		<result property="operation" column="operation" />
+		<result property="loginIp" column="login_ip" />
+		<result property="visitTime" column="visit_time" />
+	</resultMap>
+
+	<select id="countObjs" parameterType="java.util.HashMap"
+		resultType="java.lang.Integer">
+		SELECT count(1)
+		FROM metro_user_operate_rec
+	</select>
+
+	<select id="findObjsList" parameterType="java.util.HashMap"
+		resultMap="operateResultMap">
+		SELECT *
+		FROM metro_user_operate_rec
+		ORDER BY visit_time DESC
+		LIMIT #{start},#{pageSize}
+	</select>
+
+	<insert id="insertObjs" parameterType="java.util.HashMap">
+		INSERT INTO
+		metro_user_operate_rec(user_id,username,visit_menu,operation,login_ip,visit_time,create_time)
+		VALUES
+		<foreach collection="logs" item="log" separator=",">
+			(#{log.userId},#{log.username},#{log.visitMenu},#{log.operation},#{log.loginIp},#{log.visitTime},now())
+		</foreach>
+	</insert>
+
+	<select id="usernameList" parameterType="java.util.HashMap"
+		resultMap="operateResultMap">
+		SELECT DISTINCT username FROM metro_user_operate_rec WHERE
+		visit_time &gt;=
+		#{endtime} AND visit_time &lt;= #{starttime}
+	</select>
+
+	<select id="visitMenuList" parameterType="java.util.HashMap"
+		resultMap="operateResultMap">
+		SELECT DISTINCT visit_menu FROM metro_user_operate_rec WHERE
+		visit_time &gt;= #{endtime} AND visit_time &lt;= #{starttime}
+	</select>
+
+	<select id="visitMenu" parameterType="java.util.HashMap"
+		resultType="java.lang.Integer">
+		SELECT DISTINCT COUNT(visit_menu) FROM
+		metro_user_operate_rec
+		where username=#{username} AND
+		visit_menu=#{visitmenu} AND visit_time &gt;=
+		#{endtime} AND visit_time
+		&lt;= #{starttime}
+	</select>
+
+	<select id="operationList" parameterType="java.util.HashMap"
+		resultMap="operateResultMap">
+		SELECT DISTINCT operation FROM metro_user_operate_rec WHERE
+		visit_time &gt;= #{endtime} AND visit_time &lt;= #{starttime}
+	</select>
+
+	<select id="operation" parameterType="java.util.HashMap"
+		resultType="java.lang.Integer">
+		SELECT DISTINCT COUNT(operation) FROM
+		metro_user_operate_rec WHERE visit_menu=#{visitmenu} AND
+		operation=#{operation} AND username=#{username} AND visit_time &gt;=
+		#{endtime} AND visit_time &lt;= #{starttime}
+	</select>
+</mapper>

@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.szgentech.metro.dao.IMetroWarningRecDao">
+	<resultMap id="warnRecResultMap"
+		type="com.szgentech.metro.model.MetroLineIntervalWarningRec">
+		<id property="id" column="id" />
+		<result property="intervalId" column="interval_id" />
+		<result property="leftOrRight" column="left_or_right" />
+		<result property="paramName" column="param_name" />
+		<result property="numValue" column="num_value" />
+		<result property="warningLevel" column="warning_level" />
+		<result property="ringNum" column="ring_num" />
+		<result property="redWarningMax" column="red_warning_max" />
+		<result property="orangeWarningMax" column="orange_warning_max" />
+		<result property="orangeWarningMin" column="orange_warning_min" />
+		<result property="redWarningMin" column="red_warning_min" />
+		<result property="warningTime" column="warning_time" />
+		<result property="updateTime" column="update_time" />
+		<result property="createTime" column="create_time" />
+		<result property="confirmLevel" column="confirm_level" />
+		<result property="isPush" column="is_push" />
+		<result property="yellowWarningMax" column="yellow_warning_max" />
+		<result property="yellowWarningMin" column="yellow_warning_min" />
+		<result property="intervalName" column="interval_name" />
+		<association property="dic"
+			javaType="com.szgentech.metro.model.MetroDictionary">
+			<id property="id" column="dic_id" />
+			<result property="dicNo" column="dic_no" />
+			<result property="dicName" column="dic_name" />
+			<result property="dicMean" column="dic_mean" />
+			<result property="dicPrecision" column="dic_precision" />
+			<result property="dicUnit" column="dic_unit" />
+			<result property="dicType" column="dic_type" />
+		</association>
+	</resultMap>
+
+	<select id="countObjs" parameterType="java.util.HashMap"
+		resultType="java.lang.Integer">
+		SELECT COUNT(1) FROM metro_line_interval_warning_rec
+		WHERE
+		interval_id=#{intervalId} AND left_or_right=#{leftOrRight}
+		<if test="warnParam!=null">
+			AND param_name = #{warnParam}
+		</if>
+		<if test="confirmLevel != null">
+			AND confirm_level=#{confirmLevel}
+		</if>
+		<if test="isPush != null">
+			AND is_push=#{isPush}
+		</if>
+		AND warning_time BETWEEN STR_TO_DATE(#{beginTime},'%Y-%m-%d') AND
+		STR_TO_DATE(#{endTime},'%Y-%m-%d')
+
+	</select>
+
+	<select id="findObjsList" parameterType="java.util.HashMap"
+		resultMap="warnRecResultMap">
+		SELECT
+		a.*,
+		dic.id
+		dic_id,dic.dic_no,dic.dic_name,dic.dic_mean,dic.dic_precision,dic.dic_unit,dic.dic_type
+		FROM (
+		SELECT
+		*
+		FROM metro_line_interval_warning_rec
+		WHERE
+		interval_id=#{intervalId} AND left_or_right=#{leftOrRight}
+		<if test="warnParam!=null">
+			AND param_name = #{warnParam}
+		</if>
+		<if test="confirmLevel != null">
+			AND confirm_level=#{confirmLevel}
+		</if>
+		<if test="isPush != null">
+			AND is_push=#{isPush}
+		</if>
+		AND warning_time BETWEEN STR_TO_DATE(#{beginTime},'%Y-%m-%d') AND
+		STR_TO_DATE(#{endTime},'%Y-%m-%d')
+		) a
+		inner join metro_dictionary dic
+		on a.param_name=dic.dic_name
+		ORDER BY create_time DESC
+		limit
+		#{start},#{pageSize}
+	</select>
+
+	<!-- '1:0'改为'10:0' -->
+	<select id="findLastWarningRecs" parameterType="java.util.HashMap"
+		resultMap="warnRecResultMap">
+		select
+		re.*,
+		dic.id
+		dic_id,dic.dic_no,dic.dic_name,dic.dic_mean,dic.dic_precision,dic.dic_unit,dic.dic_type,i.interval_name
+		from  metro_line_interval_warning_rec  re
+		INNER JOIN  metro_user_data_rel  u ON u.interval_id=re.interval_id AND u.left_or_right=re.left_or_right
+		INNER JOIN metro_line_interval i ON i.id =re.interval_id
+		INNER JOIN metro_dictionary dic ON re.param_name=dic.dic_name
+		WHERE re.warning_time>DATE_SUB(NOW(),INTERVAL '10:0' MINUTE_SECOND)
+		<if test="userId!=1">
+			AND user_id=#{userId}
+		</if>
+	</select>
+
+	<select id="findLastWarningRecsByIntervalId" parameterType="java.util.HashMap"
+		resultMap="warnRecResultMap">
+		select
+		a.*,
+		dic.id
+		dic_id,dic.dic_no,dic.dic_name,dic.dic_mean,dic.dic_precision,dic.dic_unit,dic.dic_type
+		from (SELECT re.* FROM metro_line_interval_warning_rec re
+		WHERE
+		re.interval_id=#{intervalId} AND re.left_or_right=#{leftOrRight} AND
+		re.warning_time>DATE_SUB(NOW(),INTERVAL '10:0' MINUTE_SECOND)
+		) a
+		inner
+		join metro_dictionary dic on a.param_name=dic.dic_name
+	</select>
+
+	<!-- 批量插入 -->
+	<insert id="insertObjs" parameterType="java.util.List">
+		insert into
+		metro_line_interval_warning_rec(interval_id,param_name,num_value,warning_level,ring_num,red_warning_max,orange_warning_max,orange_warning_min,red_warning_min,left_or_right,warning_time,create_time,confirm_level,is_push,yellow_warning_max,yellow_warning_min)
+		values
+		<foreach collection="list" item="item" index="index"
+			separator=",">
+			(#{item.intervalId},#{item.paramName},#{item.numValue},#{item.warningLevel},#{item.ringNum},#{item.redWarningMax},#{item.orangeWarningMax},#{item.orangeWarningMin},#{item.redWarningMin},#{item.leftOrRight},#{item.warningTime},now(),0,0,#{item.yellowWarningMax},#{item.yellowWarningMin})
+		</foreach>
+	</insert>
+
+	<insert id="insertObj"
+		parameterType="com.szgentech.metro.model.MetroLineIntervalWarningRec"
+		useGeneratedKeys="true" keyProperty="id">
+		insert into
+		metro_line_interval_warning_rec(interval_id,param_name,num_value,warning_level,ring_num,red_warning_max,orange_warning_max,orange_warning_min,red_warning_min,left_or_right,warning_time,create_time,confirm_level,is_push,yellow_warning_max,yellow_warning_min)
+		values(#{intervalId},#{paramName},#{numValue},#{warningLevel},#{ringNum},#{redWarningMax},#{orangeWarningMax},#{orangeWarningMin},#{redWarningMin},#{leftOrRight},#{warningTime},now(),0,0,#{yellowWarningMax},#{yellowWarningMin})
+	</insert>
+
+	<update id="updateObj" parameterType="java.util.HashMap">
+		update metro_line_interval_warning_rec
+		set update_time=now()
+		<if test="intervalId != null">
+			,interval_id=#{intervalId}
+		</if>
+		<if test="paramName != null">
+			,param_name=#{paramName}
+		</if>
+		<if test="numValue != null">
+			,num_value=#{numValue}
+		</if>
+		<if test="warningLevel != null">
+			,warning_level=#{warningLevel}
+		</if>
+		<if test="ringNum != null">
+			,ring_num=#{ringNum}
+		</if>
+		<if test="redWarningMax != null">
+			,red_warning_max=#{redWarningMax}
+		</if>
+		<if test="orangeWarningMax != null">
+			,orange_warning_max=#{orangeWarningMax}
+		</if>
+		<if test="orangeWarningMin != null">
+			,orange_warning_min=#{orangeWarningMin}
+		</if>
+		<if test="redWarningMin != null">
+			,red_warning_min=#{redWarningMin}
+		</if>
+		<if test="leftOrRight != null">
+			,left_or_right=#{leftOrRight}
+		</if>
+		<if test="warningTime != null">
+			,warning_time=#{warningTime}
+		</if>
+		where id=#{intervalWariningRecId}
+	</update>
+
+	<delete id="deleteObj" parameterType="java.util.HashMap">
+		delete from
+		metro_line_interval_warning_rec where
+		id=#{intervalWariningRecId}
+	</delete>
+
+	<select id="findObjById" parameterType="java.util.HashMap"
+		resultMap="warnRecResultMap">
+		select * from metro_line_interval_warning_rec where
+		id=#{intervalWariningRecId}
+	</select>
+
+	<!--是否已人工确认预警等级与是否推送 -->
+	<update id="editConfirmInfo" parameterType="java.util.HashMap">
+		UPDATE metro_line_interval_warning_rec
+		SET update_time=now()
+		<if test="confirmLevel != null">
+			,confirm_level=#{confirmLevel}
+		</if>
+		<if test="isPush != null">
+			,is_push=#{isPush}
+		</if>
+		<if test="warningLevel != null">
+			,warning_level=#{warningLevel}
+		</if>
+		WHERE id=#{warnRecId}
+	</update>
+
+	<resultMap id="DaiyWarnStatisticsResultMap" type="com.szgentech.metro.model.DaiyWarnStatistics">
+		<result property="intervalId" column="interval_id" />
+		<result property="leftOrRight" column="left_or_right" />
+		<result property="dicMean" column="dic_mean" />
+		<result property="paramName" column="param_name" />
+		<result property="singleSum" column="single_sum" />
+		<result property="confirmSum" column="confirm_sum" />
+		<result property="pushSum" column="push_sum" />
+	</resultMap>
+
+	<select id="findDaiyWarnStatistics" parameterType="java.util.HashMap"
+		resultMap="DaiyWarnStatisticsResultMap">
+		SELECT d.dic_mean, t.param_name param_name, Count(*)AS
+		single_sum,
+		sum(confirm_level) AS confirm_sum, sum(is_push) AS push_sum
+		FROM
+		metro_line_interval_warning_rec t
+		INNER JOIN metro_dictionary d ON
+		d.dic_name=t.param_name
+		WHERE t.interval_id = #{intervalId}
+		AND
+		t.left_or_right = #{leftOrRight}
+		AND t.create_time BETWEEN
+		STR_TO_DATE(#{beginTime},'%Y-%m-%d') AND
+		STR_TO_DATE(DATE_ADD(#{endTime},INTERVAL 1 DAY),'%Y-%m-%d')
+		GROUP BY
+		t.param_name, d.dic_mean
+	</select>
+
+	<select id="findWarningTotal" parameterType="java.util.HashMap"
+		resultType="com.szgentech.metro.model.MetroLineIntervalWarningRec">
+		SELECT warning_level warningLevel,confirm_level
+		confirmLevel,is_push isPush FROM metro_line_interval_warning_rec
+		WHERE
+		interval_id = #{intervalId} 
+		AND left_or_right = #{leftorright} 
+		AND update_time &gt;= #{endtime} 
+		AND update_time &lt;= #{starttime}
+	</select>
+
+</mapper>

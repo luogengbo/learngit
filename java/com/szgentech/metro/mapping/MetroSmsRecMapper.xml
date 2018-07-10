@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.szgentech.metro.dao.IMetroSmsRecDao">
+<resultMap id="smsRecMap" type="com.szgentech.metro.model.MetroSmsRec" >
+	<id property="id" column="id"/>
+	<result property="templateId" column="template_id"/>
+	<result property="sendTo" column="send_to"/>
+	<result property="params" column="params"/>
+	<result property="operator" column="operator"/>
+	<result property="statusCode" column="status_code"/>
+	<result property="statusMsg" column="status_msg"/>
+	<result property="createTime" column="create_time"/>
+</resultMap>
+
+<insert id="insertObj" parameterType="com.szgentech.metro.model.MetroSmsRec" useGeneratedKeys="true" keyProperty="id">
+	insert into metro_sms_rec(template_id,send_to,params,operator,status_code,status_msg,create_time)
+	values(#{templateId},#{sendTo},#{params},#{operator},#{statusCode},#{statusMsg},now())
+</insert>
+</mapper>

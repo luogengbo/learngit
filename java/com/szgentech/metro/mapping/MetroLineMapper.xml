@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.szgentech.metro.dao.IMetroLineDao">
+	<resultMap id="lineResultMap" type="com.szgentech.metro.model.MetroLine">
+		<id property="id" column="id" />
+		<result property="cityId" column="city_id" />
+		<result property="lineName" column="line_name" />
+		<result property="lineNo" column="line_no" />
+		<result property="lineColor" column="line_color" />
+		<result property="lineStatus" column="line_status" />
+		<result property="mapX" column="map_x" />
+		<result property="mapY" column="map_y" />
+		<result property="projectPdfUrl" column="project_pdf_url" />
+		<result property="remark" column="remark" />
+		<result property="updateTime" column="update_time" />
+		<result property="createTime" column="create_time" />
+		<collection property="intervalList" column="id"
+			ofType="com.szgentech.metro.model.MetroLineInterval"
+			select="com.szgentech.metro.dao.IMetroLineIntervalDao.findObjsForLine" />
+	</resultMap>
+
+	<select id="findObjsForCity" parameterType="long" resultMap="lineResultMap">
+		SELECT *
+		FROM metro_line
+		WHERE city_id=#{cityId}
+	</select>
+
+	<insert id="insertObj" parameterType="com.szgentech.metro.model.MetroLine"
+		useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO
+		metro_line(city_id,line_name,line_no,line_color,line_status,map_x,map_y,project_pdf_url,remark)
+		VALUES(#{cityId},#{lineName},#{lineNo},#{lineColor},#{lineStatus},#{mapX},#{mapY},#{projectPdfUrl},#{remark})
+	</insert>
+
+	<update id="updateObj" parameterType="java.util.HashMap">
+		update metro_line
+		set update_time=now()
+		<if test="cityId!=null">
+			,city_id=#{cityId}
+		</if>
+		<if test="lineName!=null">
+			,line_name=#{lineName}
+		</if>
+		<if test="lineNo!=null">
+			,line_no=#{lineNo}
+		</if>
+		<if test="lineColor!=null">
+			,line_color=#{lineColor}
+		</if>
+		<if test="lineStatus!=null">
+			,line_status=#{lineStatus}
+		</if>
+		<if test="mapX!=null">
+			,map_x=#{mapX}
+		</if>
+		<if test="mapY!=null">
+			,map_y=#{mapY}
+		</if>
+		<if test="projectPdfUrl!=null">
+			,project_pdf_url=#{projectPdfUrl}
+		</if>
+		<if test="remark!=null">
+			,remark=#{remark}
+		</if>
+		where id=#{lineId}
+	</update>
+
+	<delete id="deleteObj" parameterType="java.util.HashMap">
+		delete from metro_line where id=#{lineId}
+	</delete>
+
+	<select id="findObjById" parameterType="java.util.HashMap"
+		resultMap="lineResultMap">
+		select * from metro_line where id=#{lineId}
+	</select>
+
+</mapper>

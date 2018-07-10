@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.szgentech.metro.dao.IMetroIntervalRiskSegmentationDao">
+<resultMap id="riskSegmentationResultMap" type="com.szgentech.metro.model.MetroIntervalRiskSegmentation" >
+	<id property="id" column="id"/>
+	<result property="intervalId" column="interval_id"/>
+	<result property="leftOrRight" column="left_or_right"/>
+	<result property="geologicNo" column="geologic_no"/>
+	<result property="geologicDescription" column="geologic_description"/>
+	<result property="hydrogeololgy" column="hydrogeololgy"/>
+	<result property="riskNo" column="risk_no"/>
+	<result property="riskPoint" column="risk_point"/>
+	<result property="riskPhoto" column="risk_photo"/>
+	<result property="riskStartRing" column="risk_start_ring"/>
+	<result property="riskEndRing" column="risk_end_ring"/>
+	<result property="startMileage" column="start_mileage"/>
+	<result property="endMileage" column="end_mileage"/>
+	<result property="earlyWarningRing" column="early_warning_ring"/>
+	<result property="warningLevel" column="warning_level"/>
+	<result property="riskDescription" column="risk_description"/>
+	<result property="riskImg1Url" column="risk_img1_url"/>
+	<result property="riskImg2Url" column="risk_img2_url"/>
+	<result property="riskImg3Url" column="risk_img3_url"/>
+	<result property="isUsed" column="is_used"/>
+	<result property="updateTime" column="update_time"/>
+	<result property="createTime" column="create_time"/>
+</resultMap>
+	<insert id="insertObj" parameterType="com.szgentech.metro.model.MetroIntervalRiskSegmentation" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO metro_interval_risk_segmentation(interval_id,left_or_right,geologic_no,geologic_description,hydrogeololgy,risk_no,risk_point,risk_photo,risk_start_ring,risk_end_ring,start_mileage,end_mileage,early_warning_ring,warning_level,risk_description,is_used)
+		VALUES(#{intervalId},#{leftOrRight},#{geologicNo},#{geologicDescription},#{hydrogeololgy},#{riskNo},#{riskPoint},#{riskPhoto},#{riskStartRing},#{riskEndRing},#{startMileage},#{endMileage},#{earlyWarningRing},#{warningLevel},#{riskDescription},#{isUsed})
+	</insert>
+	
+	<update id="updateObj" parameterType="java.util.HashMap">
+	UPDATE metro_interval_risk_segmentation
+	SET update_time=now()
+	<if test="intervalId != null">
+	  ,interval_id=#{intervalId}
+	</if>
+	<if test="leftOrRight != null">
+	  ,left_or_right=#{leftOrRight}
+	</if>
+	<if test="geologicNo != null">
+	  ,geologic_no=#{geologicNo}
+	</if>
+	<if test="geologicDescription != null">
+	  ,geologic_description=#{geologicDescription}
+	</if>
+	<if test="hydrogeololgy != null">
+	  ,hydrogeololgy=#{hydrogeololgy}
+	</if>
+	<if test="riskNo != null">
+	  ,risk_no=#{riskNo}
+	</if>
+	<if test="riskPoint != null">
+	  ,risk_point=#{riskPoint}
+	</if>
+	<if test="riskPhoto != null">
+	  ,risk_photo=#{riskPhoto}
+	</if>
+	<if test="riskStartRing != null">
+	  ,risk_start_ring=#{riskStartRing}
+	</if>
+	<if test="riskEndRing != null">
+	  ,risk_end_ring=#{riskEndRing}
+	</if>
+	<if test="startMileage != null">
+	  ,start_mileage=#{startMileage}
+	</if>
+	<if test="endMileage != null">
+	  ,end_mileage=#{endMileage}
+	</if>
+	<if test="earlyWarningRing != null">
+	  ,early_warning_ring=#{earlyWarningRing}
+	</if>
+	<if test="warningLevel != null">
+	  ,warning_level=#{warningLevel}
+	</if>
+	<if test="riskDescription != null">
+	  ,risk_description=#{riskDescription}
+	</if>
+	<if test="riskImg1Url != null">
+	  ,risk_img1_url=#{riskImg1Url}
+	</if>
+	<if test="riskImg2Url != null">
+	  ,risk_img2_url=#{riskImg2Url}
+	</if>
+	<if test="riskImg3Url != null">
+	  ,risk_img3_url=#{riskImg3Url}
+	</if>
+	<if test="isUsed != null">
+	  ,is_used=#{isUsed}
+	</if>
+	where id=#{riskId}
+	</update>
+	
+	<update id="updateImg" parameterType="java.util.HashMap">
+		UPDATE metro_interval_risk_segmentation
+		SET update_time=now()
+		<if test="riskImg1Url != null">
+			,risk_img1_url=#{riskImg1Url}
+		</if>
+		<if test="riskImg1Url == null">
+			,risk_img1_url=null
+		</if>
+		<if test="riskImg2Url != null">
+			,risk_img2_url=#{riskImg2Url}
+		</if>
+		<if test="riskImg2Url == null">
+			,risk_img2_url=null
+		</if>
+		<if test="riskImg3Url != null">
+			,risk_img3_url=#{riskImg3Url}
+		</if>
+		<if test="riskImg3Url == null">
+			,risk_img3_url=null
+		</if>
+		WHERE id=#{riskId}
+	</update>
+	
+	<delete id="deleteObj" parameterType="java.util.HashMap">
+		DELETE FROM metro_interval_risk_segmentation WHERE id=#{riskId}
+	</delete>
+    
+	<select id="findriskSegmentation" parameterType="java.util.HashMap" resultMap="riskSegmentationResultMap">
+        SELECT * FROM metro_interval_risk_segmentation WHERE
+            interval_id=#{intervalId}
+		<if test="leftOrRight != null">
+			AND left_or_right=#{leftOrRight}
+		</if>
+	</select>
+	
+	<!-- 总记录数 -->
+	<select id="countObjs" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+		SELECT count(1) from metro_interval_risk_segmentation  
+			WHERE interval_id=#{intervalId}
+			<if test="leftOrRight != null">
+				AND left_or_right=#{leftOrRight}
+			</if>
+	</select>
+	
+	<!-- 分页查询 -->
+	<select id="findObjsList" parameterType="java.util.HashMap" resultMap="riskSegmentationResultMap">
+        SELECT * FROM metro_interval_risk_segmentation  WHERE
+		<if test="intervalId != null">
+            interval_id=#{intervalId}
+        </if>
+		<if test="leftOrRight != null">
+			AND left_or_right=#{leftOrRight}
+		</if>
+		<if test="start != null">
+            LIMIT #{start},#{pageSize}
+		</if>
+	</select>
+    
+	<select id="findUniqueriskSegmentation" parameterType="java.util.HashMap" resultMap="riskSegmentationResultMap">
+        SELECT * FROM metro_interval_risk_segmentation WHERE
+ 		interval_id=#{intervalId}
+ 		AND left_or_right=#{leftOrRight}
+ 		AND geologic_no=#{geologicNo}
+	</select>
+	
+	<select id="findObjById" parameterType="java.util.HashMap" resultMap="riskSegmentationResultMap">
+		SELECT * FROM metro_interval_risk_segmentation WHERE id=#{riskId}
+	</select>
+	
+	<select id="findQueryVOListForAll" resultType="com.szgentech.metro.background.vo.IntervalRiskSegmentationVO">
+		SELECT distinct rs.interval_id intervalId,rs.left_or_right leftOrRight,line.line_no lineNo,inte.interval_mark intervalMark 
+		FROM metro_interval_risk_segmentation rs INNER JOIN metro_line_interval inte ON rs.interval_id=inte.id 
+		INNER JOIN metro_line line ON line.id=inte.line_id 
+		WHERE rs.is_used='1'
+	</select>
+	
+	<select id="findQueryVOList" parameterType="java.util.HashMap" resultType="com.szgentech.metro.background.vo.IntervalRiskSegmentationVO">
+		SELECT s.id as id, i.line_id as lineId,l.line_no lineNo, l.line_name as lineName, 
+		s.interval_id intervalId, i.interval_name as intervalName, i.interval_mark intervalMark, 
+		s.left_or_right leftOrRight, s.risk_no as riskNo, s.risk_point as riskPoint,
+		s.risk_start_ring as riskStartRing, s.risk_end_ring as riskEndRing, s.early_warning_ring as earlyWarningRing
+		 FROM metro_interval_risk_segmentation s 
+		INNER JOIN metro_line_interval i ON s.interval_id=i.id 
+		INNER JOIN metro_line l ON i.line_id=l.id 
+		WHERE s.interval_id=#{intervalId}
+		AND s.left_or_right=#{leftOrRight}
+		AND s.is_used='1'
+	</select>
+
+</mapper>

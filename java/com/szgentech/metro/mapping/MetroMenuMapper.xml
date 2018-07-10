@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.szgentech.metro.dao.IMetroMenuDao">
+<resultMap id="menuResultMap" type="com.szgentech.metro.model.MetroSysMenu" >
+	<id property="id" column="id"/>
+	<result property="menuName" column="menu_name"/>
+	<result property="menuUrl" column="menu_url"/>
+	<result property="level" column="level"/>
+	<result property="menuLogUrl" column="menu_log_url"/>	
+	<collection property="childMenus" javaType="java.util.List" ofType="com.szgentech.metro.model.MetroSysMenu">
+		<id property="id" column="id2"/>
+		<result property="menuName" column="menu_name2"/>
+		<result property="menuUrl" column="menu_url2"/>
+		<result property="level" column="level2"/>
+		<result property="menuLogUrl" column="menu_log_url2"/>	
+	</collection>
+	
+</resultMap>
+
+<select id="findObjsList" parameterType="java.util.HashMap" resultMap="menuResultMap">
+	select 
+		m1.id,m1.menu_name,m1.menu_url,m1.level,m1.menu_log_url,
+		m2.id id2,m2.menu_name menu_name2,m2.menu_url menu_url2,
+		m2.level level2,m2.menu_log_url menu_log_url2
+	from (select * from metro_sys_menu where level=1) m1
+	inner join metro_sys_menu m2 on m1.id=m2.parent_id
+</select>
+</mapper>

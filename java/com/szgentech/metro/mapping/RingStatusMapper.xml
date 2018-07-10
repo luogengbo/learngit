@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.szgentech.metro.dao.IRingStatusDao">
+    <resultMap id="ringStatusResultMap" type="com.szgentech.metro.model.RingStatus" >
+        <id property="id" column="id"/>
+        <result property="lrId" column="lr_id"/>
+        <result property="ringNo" column="ring_no"/>
+        <result property="startDt" column="start_dt"/>
+        <result property="endDt" column="end_dt"/>
+        <result property="mileage" column="mileage"/>
+        <result property="gcX" column="gc_X"/>
+        <result property="gcY" column="gc_Y"/>
+        <result property="gcZ" column="gc_Z"/>
+        <result property="deviationHorz" column="deviation_horz"/>
+        <result property="deviationVert" column="deviation_vert"/>
+    </resultMap>
+
+    <select id="findObjById" parameterType="java.util.HashMap" resultMap="ringStatusResultMap">
+        SELECT * FROM ring_status where id=#{ringStatusId}
+    </select>
+    
+    <select id="findRingTimeInfo" parameterType="java.util.HashMap" resultMap="ringStatusResultMap">
+       SELECT r.ring_no, r.start_dt, r.end_dt
+		FROM ring_status r
+			INNER JOIN metro_line_interval_lr lr ON r.lr_id = lr.id
+		WHERE interval_id = #{intervalId}
+			AND left_or_right = #{leftOrRight}
+			AND r.ring_no BETWEEN #{startRingNo} AND #{endRingNo}
+    </select>
+    
+    <select id="findRingNumInfo" parameterType="java.util.HashMap" resultMap="ringStatusResultMap">
+	SELECT r.ring_no, r.start_dt, r.end_dt
+	FROM ring_status r
+		INNER JOIN metro_line_interval_lr lr ON r.lr_id = lr.id
+	WHERE interval_id = #{intervalId}
+		AND left_or_right = #{leftOrRight}
+		AND r.start_dt BETWEEN STR_TO_DATE(#{beginTime}, '%Y-%m-%d') AND STR_TO_DATE(DATE_ADD(#{endTime}, INTERVAL 1 DAY), '%Y-%m-%d')	
+    </select>
+  
+</mapper>

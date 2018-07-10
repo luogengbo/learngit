@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.szgentech.metro.dao.IMetroLineIntervalDataDao">
+<resultMap id="lineIntervalDataResultMap" type="com.szgentech.metro.model.MetroLineIntervalData" >
+	<id property="id" column="id"/>
+	<result property="intervalId" column="interval_id"/>
+	<result property="mileage" column="mileage"/>
+	<result property="mapX" column="map_x"/>
+	<result property="mapY" column="map_y"/>
+	<result property="mapZ" column="map_z"/>
+	<result property="pitch" column="pitch"/>
+	<result property="leftOrRight" column="left_or_right"/>
+	<result property="isDel" column="is_del"/>
+	<result property="updateTime" column="update_time"/>
+	<result property="createTime" column="create_time"/>
+</resultMap>
+
+<select id="findObjsForLineInterval" parameterType="long" resultMap="lineIntervalDataResultMap">
+	select * from metro_line_interval_data where interval_id=#{intervalId}
+</select>
+
+<select id="findAllByIntervalIdAndLr" parameterType="java.util.HashMap" resultMap="lineIntervalDataResultMap">
+	select * from metro_line_interval_data where is_del=0 
+	<if test="intervalId != null">
+		and interval_id=#{intervalId}
+	</if>
+	<if test="leftOrRight != null">
+		and left_or_right=#{leftOrRight}
+	</if>
+</select>
+
+<insert id="insertObj" parameterType="com.szgentech.metro.model.MetroLineIntervalData" useGeneratedKeys="true" keyProperty="id">
+	INSERT INTO metro_line_interval_data(interval_id, mileage, map_x, map_y, map_z, pitch, left_or_right, is_del)
+	VALUES (#{intervalId}, #{mileage}, #{mapX}, #{mapY}, #{mapZ}, #{pitch}, #{leftOrRight}, 0)
+</insert>
+
+<update id="updateObj" parameterType="java.util.HashMap">
+	update metro_line_interval_data 
+	set update_time=now()
+	<if test="intervalId != null">
+	  ,interval_id=#{intervalId}
+	</if>
+	<if test="mileage != null">
+	  ,mileage=#{mileage}
+	</if>
+	<if test="mapX != null">
+	  ,map_x=#{mapX}
+	</if>
+	<if test="mapY != null">
+	  ,map_y=#{mapY}
+	</if>
+	<if test="mapZ != null">
+	  ,map_z=#{mapZ}
+	</if>
+	<if test="pitch != null">
+	  ,pitch=#{pitch}
+	</if>
+	<if test="leftOrRight != null">
+	  ,left_or_right=#{leftOrRight}
+	</if>
+	<if test="isDel != null">
+	  ,is_del=#{isDel}
+	</if>
+	where id=#{intervalDataId}
+</update>
+
+<update id="deleteObj" parameterType="java.util.HashMap">
+	update metro_line_interval_data set is_del=1 where id=#{intervalDataId}
+</update>
+	
+<delete id="deleteObjall" parameterType="java.util.HashMap">
+	DELETE FROM metro_line_interval_data 
+	WHERE interval_id=#{intervalId}
+		AND left_or_right=#{leftOrRight}
+</delete>
+
+<select id="findObjById" parameterType="java.util.HashMap" resultMap="lineIntervalDataResultMap">
+	select * from metro_line_interval_data where id=#{intervalDataId}
+</select>
+
+<!-- 总记录数 -->
+<select id="countObjs" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+	select count(1) from metro_line_interval_data where is_del=0 
+	<if test="intervalId != null">
+		and interval_id=#{intervalId}
+	</if>
+	<if test="leftOrRight != null">
+		and left_or_right=#{leftOrRight}
+	</if>
+</select>
+
+<!-- 分页查询 -->
+<select id="findObjsList" parameterType="java.util.HashMap" resultMap="lineIntervalDataResultMap">
+	select * from metro_line_interval_data where is_del=0 
+	<if test="intervalId != null">
+		and interval_id=#{intervalId}
+	</if>
+	<if test="leftOrRight != null">
+		and left_or_right=#{leftOrRight}
+	</if>
+	limit #{start},#{pageSize}
+</select>
+
+<select id="findUniqueData" parameterType="java.util.HashMap" resultMap="lineIntervalDataResultMap">
+	select * from metro_line_interval_data where is_del=0 
+		and interval_id=#{intervalId}
+		and left_or_right=#{leftOrRight}
+		and mileage=#{mileage}
+</select>
+</mapper>

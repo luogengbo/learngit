@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.szgentech.metro.dao.IMetroLineIntervalLrDao">
+	<resultMap id="lineIntervalLrResultMap" type="com.szgentech.metro.model.MetroLineIntervalLr">
+		<id property="id" column="id" />
+		<id property="intervalId" column="interval_id" />
+		<result property="leftOrRight" column="left_or_right" />
+		<result property="ringNum" column="ring_num" />
+		<result property="buildStatus" column="build_status" />
+		<result property="status" column="status" />
+		<result property="buildDate" column="build_date" />
+		<result property="throughDate" column="through_date" />
+		<result property="intervalColor" column="interval_color" />
+		<result property="mapXy" column="map_xy" />
+		<result property="machineNo" column="machine_no" />
+		<result property="machineCompany" column="machine_company" />
+		<result property="machineType" column="machine_type" />
+		<result property="machineProductDate" column="machine_product_date" />
+		<result property="machineContractor" column="machine_contractor" />
+		<result property="machineReviewDate" column="machine_review_date" />
+		<result property="cutterPhotoId" column="cutter_photo_id" />
+		<result property="slurryPhotoId" column="slurry_photo_id" />
+		<result property="screwPhotoId" column="screw_photo_id" />
+		<result property="remark" column="remark" />
+		<result property="speedQualifiedRange" column="speed_qualified_range" />
+		<result property="direction" column="direction" />
+		<result property="isDel" column="is_del" />
+		<result property="updateTime" column="update_time" />
+		<result property="createTime" column="create_time" />
+	</resultMap>
+
+	<select id="findObjsForLineInterval" parameterType="long" resultMap="lineIntervalLrResultMap">
+		SELECT *
+		FROM metro_line_interval_lr
+		WHERE interval_id=#{intervalId}
+		ORDER BY left_or_right
+	</select>
+
+	<insert id="insertObj" parameterType="com.szgentech.metro.model.MetroLineIntervalLr" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO metro_line_interval_lr
+			(interval_id,left_or_right,ring_num,build_status,status,build_date,through_date,interval_color,map_xy,machine_no,machine_company,machine_type,machine_product_date,machine_contractor,machine_review_date,cutter_photo_id,screw_photo_id,remark,speed_qualified_range,direction,is_del)
+		VALUES(#{intervalId},#{leftOrRight},#{ringNum},#{buildStatus},#{status},#{buildDate},#{throughDate},#{intervalColor},#{mapXy},#{machineNo},#{machineCompany},#{machineType},#{machineProductDate},#{machineContractor},#{machineReviewDate},#{cutterPhotoId},#{screwPhotoId},#{remark},#{speedQualifiedRange},#{direction},0)
+	</insert>
+
+	<update id="updateObj" parameterType="java.util.HashMap">
+		UPDATE metro_line_interval_lr
+		<set>
+			<if test="intervalId != null">
+				interval_id=#{intervalId},
+			</if>
+			<if test="leftOrRight != null">
+				left_or_right=#{leftOrRight},
+			</if>
+			<if test="ringNum != null">
+				ring_num=#{ringNum},
+			</if>
+			<if test="buildStatus != null">
+				build_status=#{buildStatus},
+			</if>
+			<if test="status != null">
+				status=#{status},
+			</if>
+			<if test="buildDate != null">
+				build_date=#{buildDate},
+			</if>
+			<if test="throughDate != null">
+				through_date=#{throughDate},
+			</if>
+			<if test="intervalColor != null">
+				interval_color=#{intervalColor},
+			</if>
+			<if test="mapXy != null">
+				map_xy=#{mapXy},
+			</if>
+			<if test="machineNo != null">
+				machine_no=#{machineNo},
+			</if>
+			<if test="machineCompany != null">
+				machine_company=#{machineCompany},
+			</if>
+			<if test="machineType != null">
+				machine_type=#{machineType},
+			</if>
+			<if test="machineProductDate != null">
+				machine_product_date=#{machineProductDate},
+			</if>
+			<if test="machineContractor != null">
+				machine_contractor=#{machineContractor},
+			</if>
+			<if test="machineReviewDate != null">
+				machine_review_date=#{machineReviewDate},
+			</if>
+			<if test="screwPhotoId != null">
+				screw_photo_id=#{screwPhotoId},
+			</if>
+			<if test="slurryPhotoId != null">
+				slurry_photo_id=#{slurryPhotoId},
+			</if>
+			<if test="cutterPhotoId != null">
+				cutter_photo_id=#{cutterPhotoId},
+			</if>
+			<if test="remark != null">
+				remark=#{remark},
+			</if>
+			<if test="speedQualifiedRange != null">
+				speed_qualified_range=#{speedQualifiedRange},
+			</if>
+			<if test="direction != null">
+				direction=#{direction},
+			</if>
+			<if test="isDel != null">
+				is_del=#{isDel}
+			</if>
+		</set>
+		WHERE id=#{intervalLrId}
+	</update>
+
+	<delete id="deleteObj" parameterType="java.util.HashMap">
+		DELETE FROM metro_line_interval_lr
+		WHERE id=#{intervalLrId}
+	</delete>
+
+	<select id="findObjById" parameterType="java.util.HashMap" resultMap="lineIntervalLrResultMap">
+		SELECT *
+		FROM metro_line_interval_lr
+		WHERE id=#{intervalLrId}
+	</select>
+
+	<!-- 总记录数 -->
+	<select id="countObjs" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+		SELECT count(1)
+		FROM metro_line_interval_lr
+		WHERE is_del=0
+		<if test="intervalId != null">
+			AND interval_id=#{intervalId}
+		</if>
+		<if test="leftOrRight != null">
+			AND left_or_right=#{leftOrRight}
+		</if>
+	</select>
+
+	<!-- 分页查询 -->
+	<select id="findObjsList" parameterType="java.util.HashMap" resultMap="lineIntervalLrResultMap">
+		SELECT *
+		FROM metro_line_interval_lr
+		WHERE is_del=0
+		<if test="intervalId != null">
+			AND interval_id=#{intervalId}
+		</if>
+		<if test="leftOrRight != null">
+			AND left_or_right=#{leftOrRight}
+		</if>
+		LIMIT #{start},#{pageSize}
+	</select>
+
+	<select id="findIntervalLr" parameterType="java.util.HashMap" resultMap="lineIntervalLrResultMap">
+		SELECT *
+		FROM metro_line_interval_lr
+		WHERE interval_id =#{intervalId}
+		AND left_or_right=#{leftOrRight}
+	</select>
+
+</mapper>

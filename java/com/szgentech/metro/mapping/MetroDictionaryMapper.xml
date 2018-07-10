@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.szgentech.metro.dao.IMetroDictionaryDao">
+	<resultMap id="dicResultMap" type="com.szgentech.metro.model.MetroDictionary">
+		<id property="id" column="id" />
+		<result property="dicNo" column="dic_no" />
+		<result property="dicName" column="dic_name" />
+		<result property="dicMean" column="dic_mean" />
+		<result property="dicPrecision" column="dic_precision" />
+		<result property="dicUnit" column="dic_unit" />
+		<result property="dicType" column="dic_type" />
+	</resultMap>
+
+	<select id="countObjs" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+		select count(1) from metro_dictionary
+	</select>
+
+	<select id="findObjsList" parameterType="java.util.HashMap" resultMap="dicResultMap">
+		select * from metro_dictionary order by dic_name ASC limit
+		#{start},#{pageSize}
+	</select>
+
+	<select id="selectByName" parameterType="string" resultMap="dicResultMap">
+		select * from metro_dictionary where dic_name=#{dicName}
+	</select>
+
+	<select id="checkPhotoName" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+		select count(1) from metro_photos where photo_name=#{pname}
+	</select>
+	
+	<select id="findDictionaryList" parameterType="java.util.List" resultMap="dicResultMap">
+		select * from metro_dictionary where 1=1 
+		<foreach collection="list" item="item" index="index" separator="," open="and dic_name in ("
+			close=")">
+			#{item}
+		</foreach>
+	</select>
+</mapper>

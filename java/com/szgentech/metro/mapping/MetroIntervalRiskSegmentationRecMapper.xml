@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.szgentech.metro.dao.IMetroIntervalRiskSegmentationRecDao">
+<resultMap id="riskSegmentationResultMap" type="com.szgentech.metro.model.MetroIntervalRiskSegmentationRec" >
+	<id property="id" column="id"/>
+	<result property="intervalId" column="interval_id"/>
+	<result property="leftOrRight" column="left_or_right"/>
+	<result property="riskSegmentationId" column="risk_segmentation_id"/>
+	<result property="ringNum" column="ring_num"/>
+	<result property="createTime" column="create_time"/>
+</resultMap>
+	<insert id="insertObj" parameterType="com.szgentech.metro.model.MetroIntervalRiskSegmentationRec" useGeneratedKeys="true" keyProperty="id">
+		insert into metro_interval_risk_segmentation_rec(interval_id,left_or_right,risk_segmentation_id,ring_num)
+		values(#{intervalId},#{leftOrRight},#{riskSegmentationId},#{ringNum})
+	</insert>
+	
+	<update id="updateObj" parameterType="java.util.HashMap">
+	update metro_interval_risk_segmentation_rec
+	<set>
+	<if test="intervalId != null">
+	  interval_id=#{intervalId},
+	</if>
+	<if test="leftOrRight != null">
+	  left_or_right=#{leftOrRight},
+	</if>
+	<if test="riskSegmentationId != null">
+	  risk_segmentation_id=#{riskSegmentationId},
+	</if>
+	<if test="ringNum != null">
+	  ring_num=#{ringNum}
+	</if>
+	</set>
+	where id=#{riskRecId}
+	</update>
+	
+	<delete id="deleteObj" parameterType="java.util.HashMap">
+		delete from metro_interval_risk_segmentation_rec where id=#{riskRecId}
+	</delete>
+    
+	<select id="findRiskRecByRiskId" parameterType="java.util.HashMap" resultMap="riskSegmentationResultMap">
+        SELECT * FROM metro_interval_risk_segmentation_rec WHERE
+ 		risk_segmentation_id=#{riskId}
+ 		and ring_num between #{start} and #{end}
+	</select>
+	
+	<!-- 总记录数 -->
+	<select id="countObjs" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+		select count(1) from metro_interval_risk_segmentation_rec  
+			where interval_id=#{intervalId}
+			and left_or_right=#{leftOrRight}
+	</select>
+	
+	<!-- 分页查询 -->
+    <select id="findObjsList" parameterType="java.util.HashMap" resultMap="riskSegmentationResultMap">
+        SELECT * FROM metro_interval_risk_segmentation_rec  WHERE
+        <if test="intervalId != null">
+            interval_id=#{intervalId}
+        </if>
+        <if test="leftOrRight != null">
+		and left_or_right=#{leftOrRight}
+		</if>
+        <if test="start != null">
+            limit #{start},#{pageSize}
+        </if>
+    </select>
+    
+	<select id="findUniqueriskSegmentation" parameterType="java.util.HashMap" resultMap="riskSegmentationResultMap">
+        SELECT * FROM metro_interval_risk_segmentation_rec WHERE
+ 		
+	</select>
+	
+</mapper>

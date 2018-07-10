@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.szgentech.metro.dao.IMetroLineIntervalPpDao">
+<resultMap id="lineIntervalPpResultMap" type="com.szgentech.metro.model.MetroLineIntervalPp" >
+	<id property="id" column="id"/>
+	<result property="intervalId" column="interval_id"/>
+	<result property="mapPointa" column="map_pointa"/>
+	<result property="mapPointb" column="map_pointb"/>
+	<result property="svgPointa" column="svg_pointa"/>
+	<result property="svgPointb" column="svg_pointb"/>
+	<result property="sectionPointa" column="section_pointa"/>
+	<result property="sectionPointb" column="section_pointb"/>
+	<result property="sectionSvgPointa" column="section_svg_pointa"/>
+	<result property="sectionSvgPointb" column="section_svg_pointb"/>
+	<result property="ppSvgUrl" column="pp_svg_url"/>
+	<result property="sectionSvgUrl" column="section_svg_url"/>
+	<result property="updateTime" column="update_time"/>
+	<result property="createTime" column="create_time"/>
+	<result property="section_svg_url_r" column="section_svg_url_r"/>
+</resultMap>
+
+<insert id="insertObj" parameterType="com.szgentech.metro.model.MetroLineIntervalPp" useGeneratedKeys="true" keyProperty="id">
+	insert into metro_line_interval_pp(interval_id,map_pointa,map_pointb,svg_pointa,svg_pointb,section_pointa,section_pointb,section_svg_pointa,section_svg_pointb,pp_svg_url,section_svg_url,section_svg_url_r,create_time)
+	values(#{intervalId},#{mapPointa},#{mapPointb},#{svgPointa},#{svgPointb},#{sectionPointa},#{sectionPointb},#{sectionSvgPointa},#{sectionSvgPointb},#{ppSvgUrl},#{sectionSvgUrl},#{section_svg_url_r},now())
+</insert>
+
+<update id="updateObj" parameterType="java.util.HashMap">
+	update metro_line_interval_pp 
+	set update_time=now()
+	<if test="intervalId != null">
+	  ,interval_id=#{intervalId}
+	</if>
+	<if test="mapPointa != null">
+	  ,map_pointa=#{mapPointa}
+	</if>
+	<if test="mapPointb != null">
+	  ,map_pointb=#{mapPointb}
+	</if>
+	<if test="svgPointa != null">
+	  ,svg_pointa=#{svgPointa}
+	</if>
+	<if test="svgPointb != null">
+	  ,svg_pointb=#{svgPointb}
+	</if>
+	<if test="sectionPointa != null">
+	  ,section_pointa=#{sectionPointa}
+	</if>
+	<if test="sectionPointb != null">
+	  ,section_pointb=#{sectionPointb}
+	</if>
+	<if test="sectionSvgPointa != null">
+	  ,section_svg_pointa=#{sectionSvgPointa}
+	</if>
+	<if test="sectionSvgPointb != null">
+	  ,section_svg_pointb=#{sectionSvgPointb}
+	</if>
+	<if test="ppSvgUrl != null">
+	  ,pp_svg_url=#{ppSvgUrl}
+	</if>
+	<if test="sectionSvgUrl != null">
+	  ,section_svg_url=#{sectionSvgUrl}
+	</if>
+	<if test="section_svg_url_r != null">
+	  ,section_svg_url_r=#{section_svg_url_r}
+	</if>
+	where id=#{intervalPpId}
+</update>
+
+<delete id="deleteObj" parameterType="java.util.HashMap">
+	delete from metro_line_interval_pp where id=#{intervalPpId}
+</delete>
+
+<select id="findObjById" parameterType="java.util.HashMap" resultMap="lineIntervalPpResultMap">
+	select * from metro_line_interval_pp where id=#{intervalPpId}
+</select>
+
+<select id="findByIntervalId" parameterType="long" resultMap="lineIntervalPpResultMap">
+	select * from metro_line_interval_pp where interval_id=#{intervalId}
+</select>
+</mapper>

@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.szgentech.metro.dao.IMetroLineIntervalWarningDao">
+<resultMap id="lineIntervalWarningResultMap" type="com.szgentech.metro.model.MetroLineIntervalWarning" >
+	<id property="id" column="id"/>
+	<result property="intervalId" column="interval_id"/>
+	<result property="param" column="param"/>
+	<result property="category" column="category" />
+	<result property="startRingNum" column="start_ring_num"/>
+	<result property="endRingNum" column="end_ring_num"/>
+	<result property="redWarningMax" column="red_warning_max"/>
+	<result property="orangeWarningMax" column="orange_warning_max"/>
+	<result property="orangeWarningMin" column="orange_warning_min"/>
+	<result property="redWarningMin" column="red_warning_min"/>
+	<result property="leftOrRight" column="left_or_right"/>
+	<result property="isDel" column="is_del"/>
+	<result property="updateTime" column="update_time"/>
+	<result property="createTime" column="create_time"/>
+	<result property="yellowWarningMax" column="yellow_warning_max"/>
+	<result property="yellowWarningMin" column="yellow_warning_min"/>
+	<result property="scanningFrequency" column="scanning_frequency"/>
+	<result property="redDuration" column="red_duration"/>
+	<result property="orangeDuration" column="orange_duration"/>
+	<result property="yellowDuration" column="yellow_duration"/>
+    <association property="paramDic" column="param" select="com.szgentech.metro.dao.IMetroDictionaryDao.selectByName"/>
+</resultMap>
+
+<insert id="insertObj" parameterType="com.szgentech.metro.model.MetroLineIntervalWarning" useGeneratedKeys="true" keyProperty="id">
+	insert into metro_line_interval_warning(interval_id,param,category,start_ring_num,end_ring_num,red_warning_max,orange_warning_max,orange_warning_min,red_warning_min,left_or_right,is_del,yellow_warning_max,yellow_warning_min,scanning_frequency,red_duration,orange_duration,yellow_duration,create_time)
+	values(#{intervalId},#{param},#{category},#{startRingNum},#{endRingNum},#{redWarningMax},#{orangeWarningMax},#{orangeWarningMin},#{redWarningMin},#{leftOrRight},0,#{yellowWarningMax},#{yellowWarningMin},#{scanningFrequency},#{redDuration},#{orangeDuration},#{yellowDuration},now())
+</insert>
+
+<update id="updateObj" parameterType="java.util.HashMap">
+	update metro_line_interval_warning 
+	set update_time=now()
+	<if test="intervalId != null">
+	  ,interval_id=#{intervalId}
+	</if>
+	<if test="param != null">
+	  ,param=#{param}
+	</if>
+	<if test="category != null">
+		,category=#{category}
+	</if>
+	<if test="startRingNum != null">
+	  ,start_ring_num=#{startRingNum}
+	</if>
+	<if test="endRingNum != null">
+	  ,end_ring_num=#{endRingNum}
+	</if>
+	<if test="redWarningMax != null">
+	  ,red_warning_max=#{redWarningMax}
+	</if>
+	<if test="orangeWarningMax != null">
+	  ,orange_warning_max=#{orangeWarningMax}
+	</if>
+	<if test="orangeWarningMin != null">
+	  ,orange_warning_min=#{orangeWarningMin}
+	</if>
+	<if test="redWarningMin != null">
+	  ,red_warning_min=#{redWarningMin}
+	</if>
+	<if test="leftOrRight != null">
+	  ,left_or_right=#{leftOrRight}
+	</if>
+	<if test="isDel != null">
+	  ,is_del=#{isDel}
+	</if>
+	<if test="yellowWarningMax != null">
+	  ,yellow_warning_max=#{yellowWarningMax}
+	</if>
+	<if test="yellowWarningMin != null">
+	  ,yellow_warning_min=#{yellowWarningMin}
+	</if>
+	<if test="scanningFrequency != null">
+	  ,scanning_frequency=#{scanningFrequency}
+	</if>
+	<if test="redDuration != null">
+	  ,red_duration=#{redDuration}
+	</if>
+	<if test="orangeDuration != null">
+	  ,orange_duration=#{orangeDuration}
+	</if>
+	<if test="yellowDuration != null">
+	  ,yellow_duration=#{yellowDuration}
+	</if>
+	where id=#{intervalWariningId}
+</update>
+
+<update id="deleteObj" parameterType="java.util.HashMap">
+	update metro_line_interval_warning set is_del=1 where id=#{intervalWariningId}
+</update>
+
+<select id="findObjById" parameterType="java.util.HashMap" resultMap="lineIntervalWarningResultMap">
+	select * from metro_line_interval_warning where id=#{intervalWariningId}
+</select>
+
+<select id="findAllByIntervalIdAndLr" parameterType="java.util.HashMap" resultMap="lineIntervalWarningResultMap">
+	select * from metro_line_interval_warning where is_del=0 
+	<if test="intervalId != null">
+		and interval_id=#{intervalId}
+	</if>
+	<if test="leftOrRight != null">
+		and left_or_right=#{leftOrRight}
+	</if>
+</select>
+
+<select id="findUniqueData" parameterType="java.util.HashMap" resultMap="lineIntervalWarningResultMap">
+	select * from metro_line_interval_warning where is_del=0 
+		and interval_id=#{intervalId}
+		and left_or_right=#{leftOrRight}
+		and param=#{param}
+		and start_ring_num=#{startRingNum}
+		and end_ring_num=#{endRingNum}
+</select>
+
+
+<!-- 总记录数 -->
+<select id="countObjs" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+	select count(1) from metro_line_interval_warning where is_del=0 
+	<if test="intervalId != null">
+		and interval_id=#{intervalId}
+	</if>
+	<if test="leftOrRight != null">
+		and left_or_right=#{leftOrRight}
+	</if>
+</select>
+
+<!-- 分页查询 -->
+<select id="findObjsList" parameterType="java.util.HashMap" resultMap="lineIntervalWarningResultMap">
+	select  		
+		*
+	from metro_line_interval_warning where is_del=0 
+	<if test="intervalId != null">
+		and interval_id=#{intervalId}
+	</if>
+	<if test="leftOrRight != null">
+		and left_or_right=#{leftOrRight}
+	</if>
+	limit #{start},#{pageSize}
+</select>
+
+<select id="findQueryVOListForAll" resultType="com.szgentech.metro.background.vo.IntervalWarningVO">
+	select distinct warn.interval_id intervalId,warn.left_or_right leftOrRight,line.line_no lineNo,inte.interval_mark intervalMark 
+	from metro_line_interval_warning warn inner join metro_line_interval inte on warn.interval_id=inte.id 
+	inner join metro_line line on line.id=inte.line_id 
+	where warn.is_del=0
+</select>
+
+<select id="findQueryVOListForParams" parameterType="java.util.HashMap" resultType="com.szgentech.metro.background.vo.IntervalWarningVO">
+	select warn.interval_id intervalId,warn.param param,warn.category category,warn.start_ring_num startRingNum,warn.end_ring_num endRingNum,warn.red_warning_max redWarningMax,warn.orange_warning_max orangeWarningMax,warn.yellow_warning_max yellowWarningMax,warn.yellow_warning_min yellowWarningMin,warn.orange_warning_min orangeWarningMin,warn.red_warning_min redWarningMin,warn.left_or_right leftOrRight,line.line_no lineNo,inte.interval_mark intervalMark 
+	from metro_line_interval_warning warn inner join metro_line_interval inte on warn.interval_id=inte.id 
+	inner join metro_line line on line.id=inte.line_id 
+	where warn.is_del=0 and warn.interval_id=#{intervalId} and warn.left_or_right=#{leftOrRight} and warn.start_ring_num&lt;=#{ringNum} and warn.end_ring_num&gt;=#{ringNum} and warn.param=#{params}
+</select>
+
+<select id="findQueryVOList" parameterType="java.util.HashMap" resultType="com.szgentech.metro.background.vo.IntervalWarningVO">
+		select warn.interval_id intervalId,warn.param param,warn.category category,warn.start_ring_num startRingNum,warn.end_ring_num endRingNum,warn.red_warning_max redWarningMax,warn.orange_warning_max orangeWarningMax,warn.yellow_warning_max yellowWarningMax,warn.yellow_warning_min yellowWarningMin,warn.orange_warning_min orangeWarningMin,warn.red_warning_min redWarningMin,warn.left_or_right leftOrRight,line.line_no lineNo,inte.interval_mark intervalMark
+		from metro_line_interval_warning warn inner join metro_line_interval inte on warn.interval_id=inte.id
+		inner join metro_line line on line.id=inte.line_id
+		where warn.is_del=0 and warn.interval_id=#{intervalId} and warn.left_or_right=#{leftOrRight} and warn.start_ring_num&lt;=#{ringNum} and warn.end_ring_num&gt;=#{ringNum}
+</select>
+</mapper>

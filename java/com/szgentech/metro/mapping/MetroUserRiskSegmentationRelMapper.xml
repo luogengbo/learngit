@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.szgentech.metro.dao.IMetroUserRiskSegmentationRelDao">
+	<resultMap id="userRIskRelResultMap" type="com.szgentech.metro.model.MetroUserRiskSegmentationRel" >
+		<id property="id" column="id"/>
+		<result property="userId" column="user_id" />
+		<result property="riskSegmentationId" column="risk_segmentation_id" />
+		<result property="isUsed" column="is_used" />
+		<result property="phoneNo" column="phone_no" />
+		<result property="createTime" column="create_time" />
+	</resultMap>
+	
+	<select id="findObjById" parameterType="java.util.HashMap" resultMap="userRIskRelResultMap">
+		SELECT rs.* FROM metro_user_risk_segmentation_rel rs
+		INNER JOIN metro_user u ON u.id=rs.user_id
+		WHERE rs.id=#{id} AND u.is_del=0
+	</select>
+	
+	<insert id="insertObj" parameterType="com.szgentech.metro.model.MetroUserRiskSegmentationRel" useGeneratedKeys="true" keyProperty="id">
+		insert into metro_user_risk_segmentation_rel(user_id,risk_segmentation_id,is_used,phone_no)
+		values(#{userId},#{riskSegmentationId},#{isUsed},#{phoneNo})
+	</insert>
+	
+	<update id="updateObj" parameterType="java.util.HashMap">
+	update metro_user_risk_segmentation_rel
+	<set>
+	<if test="userId != null">
+	  user_id=#{userId},
+	</if>
+	<if test="riskSegmentationId != null">
+	  risk_segmentation_id=#{riskSegmentationId},
+	</if>
+	<if test="isUsed != null">
+	  is_used=#{isUsed},
+	</if>
+	<if test="phoneNo != null">
+	  phone_no=#{phoneNo}
+	</if>
+	</set>
+	where id=#{userRiskRecId}
+	</update>
+	
+	<delete id="deleteObj" parameterType="java.util.HashMap">
+		delete from metro_user_risk_segmentation_rel where id=#{userRiskRecId}
+	</delete>
+	
+	<select id="findObjsByRiskId" parameterType="java.util.HashMap" resultMap="userRIskRelResultMap">
+		SELECT rs.* FROM metro_user_risk_segmentation_rel rs
+		INNER JOIN metro_user u ON u.id=rs.user_id
+		WHERE rs.risk_segmentation_id=#{riskSegmentationId} AND u.is_del=0
+	</select>
+
+</mapper>

@@ -1,0 +1,390 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.szgentech.metro.dao.IMetroDailyReportDao">
+<resultMap id="dailyReprtResultMap" type="com.szgentech.metro.model.MetroDailyReport" >
+	<id property="id" column="id"/>
+	<result property="intervalId" column="interval_id"/>
+	<result property="leftOrRight" column="left_or_right"/>
+	<result property="summary" column="summary"/>
+	<result property="progressStatistics" column="progress_statistics"/>
+	<result property="workingCondition" column="working_condition"/>
+	<result property="settlement" column="settlement"/>
+	<result property="settlementImg" column="settlement_img"/>
+	<result property="riskSituation" column="risk_situation"/>
+	<result property="riskSituationImg" column="risk_situation_img"/>
+	<result property="geology" column="geology"/>
+	<result property="geologyImg" column="geology_img"/>
+	<result property="grouting" column="grouting"/>
+	<result property="groutingImg" column="grouting_img"/>
+	<result property="horizontalAttitude" column="horizontal_attitude"/>
+	<result property="horizontalAttitudeImg" column="horizontal_attitude_img"/>
+	<result property="verticalAttitude" column="vertical_attitude"/>
+	<result property="verticalAttitudeImg" column="vertical_attitude_img"/>
+	<result property="earlyWarning" column="early_warning"/>
+	<result property="earlyWarningImg" column="early_warning_img"/>
+	<result property="auditOpinion" column="audit_opinion"/>
+	<result property="reportTime" column="report_time"/>
+	<result property="operator" column="operator"/>
+	<result property="reviewer" column="reviewer"/>
+	<result property="startA0004" column="start_a0004"/>
+	<result property="endA0004" column="end_a0004"/>
+	<result property="minA0004" column="min_a0004"/>
+	<result property="maxA0004" column="max_a0004"/>
+	<result property="analysisA0004" column="analysis_a0004"/>
+	<result property="startA0013" column="start_a0013"/>
+	<result property="endA0013" column="end_a0013"/>
+	<result property="minA0013" column="min_a0013"/>
+	<result property="maxA0013" column="max_a0013"/>
+	<result property="analysisA0013" column="analysis_a0013"/>
+	<result property="startB0001" column="start_b0001"/>
+	<result property="endB0001" column="end_b0001"/>
+	<result property="minB0001" column="min_b0001"/>
+	<result property="maxB0001" column="max_b0001"/>
+	<result property="analysisB0001" column="analysis_b0001"/>
+	<result property="startB0002" column="start_b0002"/>
+	<result property="endB0002" column="end_b0002"/>
+	<result property="minB0002" column="min_b0002"/>
+	<result property="maxB0002" column="max_b0002"/>
+	<result property="analysisB0002" column="analysis_b0002"/>
+	<result property="startB0004" column="start_b0004"/>
+	<result property="endB0004" column="end_b0004"/>
+	<result property="minB0004" column="min_b0004"/>
+	<result property="maxB0004" column="max_b0004"/>
+	<result property="analysisB0004" column="analysis_b0004"/>
+	<result property="startB0006" column="start_b0006"/>
+	<result property="endB0006" column="end_b0006"/>
+	<result property="minB0006" column="min_b0006"/>
+	<result property="maxB0006" column="max_b0006"/>
+	<result property="analysisB0006" column="analysis_b0006"/>
+	<result property="startB0015" column="start_b0015"/>
+	<result property="endB0015" column="end_b0015"/>
+	<result property="minB0015" column="min_b0015"/>
+	<result property="maxB0015" column="max_b0015"/>
+	<result property="analysisB0015" column="analysis_b0015"/>
+	<result property="startR0026" column="start_r0026"/>
+	<result property="endR0026" column="end_r0026"/>
+	<result property="minR0026" column="min_r0026"/>
+	<result property="maxR0026" column="max_r0026"/>
+	<result property="analysisR0026" column="analysis_r0026"/>
+	<result property="startR0028" column="start_r0025"/>
+	<result property="endR0028" column="end_r0025"/>
+	<result property="minR0028" column="min_r0025"/>
+	<result property="maxR0028" column="max_r0025"/>
+	<result property="analysisR0028" column="analysis_r0025"/>
+	<result property="startR0025" column="start_r0028"/>
+	<result property="endR0025" column="end_r0028"/>
+	<result property="minR0025" column="min_r0028"/>
+	<result property="maxR0025" column="max_r0028"/>
+	<result property="analysisR0025" column="analysis_r0028"/>
+	<result property="startR0004" column="start_r0004"/>
+	<result property="endR0004" column="end_r0004"/>
+	<result property="minR0004" column="min_r0004"/>
+	<result property="maxR0004" column="max_r0004"/>
+	<result property="analysisR0004" column="analysis_r0004"/>
+	<result property="updateTime" column="update_time"/>
+	<result property="createTime" column="create_time"/>
+</resultMap>
+	<insert id="insertObj" parameterType="com.szgentech.metro.model.MetroDailyReport"
+	useGeneratedKeys="true" keyProperty="id">
+	INSERT INTO
+	metro_dailyreport(interval_id,left_or_right,summary,progress_statistics,working_condition,settlement,settlement_img,risk_situation,
+	risk_situation_img,geology,geology_img,grouting,grouting_img,horizontal_attitude,horizontal_attitude_img,vertical_attitude,
+	vertical_attitude_img,early_warning,early_warning_img,audit_opinion,report_time,operator,reviewer,
+	start_a0004,end_a0004,min_a0004,max_a0004,analysis_a0004,start_a0013,end_a0013,min_a0013,max_a0013,analysis_a0013,
+	start_b0001,end_b0001,min_b0001,max_b0001,analysis_b0001,start_b0002,end_b0002,min_b0002,max_b0002,analysis_b0002,
+	start_b0004,end_b0004,min_b0004,max_b0004,analysis_b0004,start_b0006,end_b0006,min_b0006,max_b0006,analysis_b0006,
+	start_b0015,end_b0015,min_b0015,max_b0015,analysis_b0015,start_r0026,end_r0026,min_r0026,max_r0026,analysis_r0026,
+	start_r0028,end_r0028,min_r0028,max_r0028,analysis_r0028,start_r0025,end_r0025,min_r0025,max_r0025,analysis_r0025,
+	start_r0004,end_r0004,min_r0004,max_r0004,analysis_r0004)
+	VALUES
+	(#{intervalId},#{leftOrRight},#{summary},#{progressStatistics},#{workingCondition},#{settlement},#{settlementImg},#{riskSituation},#{riskSituationImg},
+	#{geology},#{geologyImg},#{grouting},#{groutingImg},#{horizontalAttitude},#{horizontalAttitudeImg},#{verticalAttitude},#{verticalAttitudeImg},
+	#{earlyWarning},#{earlyWarningImg},#{auditOpinion},#{reportTime},#{operator},#{reviewer},
+	#{startA0004},#{endA0004},#{minA0004},#{maxA0004},#{analysisA0004},#{startA0013},#{endA0013},#{minA0013},#{maxA0013},#{analysisA0013},
+	#{startB0001},#{endB0001},#{minB0001},#{maxB0001},#{analysisB0001},#{startB0002},#{endB0002},#{minB0002},#{maxB0002},#{analysisB0002},
+	#{startB0004},#{endB0004},#{minB0004},#{maxB0004},#{analysisB0004},#{startB0006},#{endB0006},#{minB0006},#{maxB0006},#{analysisB0006},
+	#{startB0015},#{endB0015},#{minB0015},#{maxB0015},#{analysisB0015},#{startR0026},#{endR0026},#{minR0026},#{maxR0026},#{analysisR0026},
+	#{startR0028},#{endR0028},#{minR0028},#{maxR0028},#{analysisR0028},#{startR0025},#{endR0025},#{minR0025},#{maxR0025},#{analysisR0025},
+	#{startR0004},#{endR0004},#{minR0004},#{maxR0004},#{analysisR0004})
+</insert>
+	
+	<update id="updateObj" parameterType="java.util.HashMap">
+	UPDATE metro_dailyreport
+	<set>
+	<if test="intervalId != null">
+	  interval_id=#{intervalId},
+	</if>
+	<if test="leftOrRight != null">
+	  left_or_right=#{leftOrRight},
+	</if>
+	<if test="summary != null">
+	  summary=#{summary},
+	</if>
+	<if test="progressStatistics != null">
+	  progress_statistics=#{progressStatistics},
+	</if>
+	<if test="workingCondition != null">
+	  working_condition=#{workingCondition},
+	</if>
+	<if test="settlement != null">
+	  settlement=#{settlement},
+	</if>
+	<if test="settlementImg != null">
+	  settlement_img=#{settlementImg},
+	</if>
+	<if test="riskSituation != null">
+	  risk_situation=#{riskSituation},
+	</if>
+	<if test="riskSituationImg != null">
+	  risk_situation_img=#{riskSituationImg},
+	</if>
+	<if test="geology != null">
+	  geology=#{geology},
+	</if>
+	<if test="geologyImg != null">
+	  geology_img=#{geologyImg},
+	</if>
+	<if test="grouting != null">
+	  grouting=#{grouting},
+	</if>
+	<if test="groutingImg != null">
+	  grouting_img=#{groutingImg},
+	</if>
+	<if test="horizontalAttitude != null">
+	  horizontal_attitude=#{horizontalAttitude},
+	</if>
+	<if test="horizontalAttitudeImg != null">
+	  horizontal_attitude_img=#{horizontalAttitudeImg},
+	</if>
+	<if test="verticalAttitude != null">
+	  vertical_attitude=#{verticalAttitude},
+	</if>
+	<if test="verticalAttitudeImg != null">
+	  vertical_attitude_img=#{verticalAttitudeImg},
+	</if>
+	<if test="earlyWarning != null">
+	  early_warning=#{earlyWarning},
+	</if>
+	<if test="earlyWarningImg != null">
+	  early_warning_img=#{earlyWarningImg},
+	</if>
+	<if test="auditOpinion != null">
+	  audit_opinion=#{auditOpinion},
+	</if>
+	<if test="reportTime != null">
+	  report_time=#{reportTime},
+	</if>
+	<if test="operator != null">
+	  operator=#{operator},
+	</if>
+	<if test="reviewer != null">
+	  reviewer=#{reviewer},
+	</if>
+	<if test="startA0004 != null">
+	  start_a0004=#{startA0004},
+	</if>
+	<if test="endA0004 != null">
+	  end_a0004=#{endA0004},
+	</if>
+	<if test="minA0004 != null">
+	  min_a0004=#{minA0004},
+	</if>
+	<if test="maxA0004 != null">
+	  max_a0004=#{maxA0004},
+	</if>
+	<if test="analysisA0004 != null">
+	  analysis_a0004=#{analysisA0004},
+	</if>
+	<if test="startA0013 != null">
+	  start_a0013=#{startA0013},
+	</if>
+	<if test="endA0013 != null">
+	  end_a0013=#{endA0013},
+	</if>
+	<if test="minA0013 != null">
+	  min_a0013=#{minA0013},
+	</if>
+	<if test="maxA0013 != null">
+	  max_a0013=#{maxA0013},
+	</if>
+	<if test="analysisA0013 != null">
+	  analysis_a0013=#{analysisA0013},
+	</if>
+	<if test="startB0001 != null">
+	  start_b0001=#{startB0001},
+	</if>
+	<if test="endB0001 != null">
+	  end_b0001=#{endB0001},
+	</if>
+	<if test="minB0001 != null">
+	  min_b0001=#{minB0001},
+	</if>
+	<if test="maxB0001 != null">
+	  max_b0001=#{maxB0001},
+	</if>
+	<if test="analysisB0001 != null">
+	  analysis_b0001=#{analysisB0001},
+	</if>
+	<if test="startB0002 != null">
+	  start_b0002=#{startB0002},
+	</if>
+	<if test="endB0002 != null">
+	  end_b0002=#{endB0002},
+	</if>
+	<if test="minB0002 != null">
+	  min_b0002=#{minB0002},
+	</if>
+	<if test="maxB0002 != null">
+	  max_b0002=#{maxB0002},
+	</if>
+	<if test="analysisB0002 != null">
+	  analysis_b0002=#{analysisB0002},
+	</if>
+	<if test="startB0004 != null">
+	  start_b0004=#{startB0004},
+	</if>
+	<if test="endB0004 != null">
+	  end_b0004=#{endB0004},
+	</if>
+	<if test="minB0004 != null">
+	  min_b0004=#{minB0004},
+	</if>
+	<if test="maxB0004 != null">
+	  max_b0004=#{maxB0004},
+	</if>
+	<if test="analysisB0004 != null">
+	  analysis_b0004=#{analysisB0004},
+	</if>
+	<if test="startB0006 != null">
+	  start_b0006=#{startB0006},
+	</if>
+	<if test="endB0006 != null">
+	  end_b0006=#{endB0006},
+	</if>
+	<if test="minB0006 != null">
+	  min_b0006=#{minB0006},
+	</if>
+	<if test="maxB0006 != null">
+	  max_b0006=#{maxB0006},
+	</if>
+	<if test="analysisB0006 != null">
+	  analysis_b0006=#{analysisB0006},
+	</if>
+	<if test="startB0015 != null">
+	  start_b0015=#{startB0015},
+	</if>
+	<if test="endB0015 != null">
+	  end_b0015=#{endB0015},
+	</if>
+	<if test="minB0015 != null">
+	  min_b0015=#{minB0015},
+	</if>
+	<if test="maxB0015 != null">
+	  max_b0015=#{maxB0015},
+	</if>
+	<if test="analysisB0015 != null">
+	  analysis_b0015=#{analysisB0015},
+	</if>
+	<if test="startR0026 != null">
+	  start_r0026=#{startR0026},
+	</if>
+	<if test="endR0026 != null">
+	  end_r0026=#{endR0026},
+	</if>
+	<if test="minR0026 != null">
+	  min_r0026=#{minR0026},
+	</if>
+	<if test="maxR0026 != null">
+	  max_r0026=#{maxR0026},
+	</if>
+	<if test="analysisR0026 != null">
+	  analysis_r0026=#{analysisR0026},
+	</if>
+	<if test="startR0028 != null">
+	  start_r0028=#{startR0028},
+	</if>
+	<if test="endR0028 != null">
+	  end_r0028=#{endR0028},
+	</if>
+	<if test="minR0028 != null">
+	  min_r0028=#{minR0028},
+	</if>
+	<if test="maxR0028 != null">
+	  max_r0028=#{maxR0028},
+	</if>
+	<if test="analysisR0028 != null">
+	  analysis_r0028=#{analysisR0028},
+	</if>
+	<if test="startR0025 != null">
+	  start_r0025=#{startR0025},
+	</if>
+	<if test="endR0025 != null">
+	  end_r0025=#{endR0025},
+	</if>
+	<if test="minR0025 != null">
+	  min_r0025=#{minR0025},
+	</if>
+	<if test="maxR0025 != null">
+	  max_r0025=#{maxR0025},
+	</if>
+	<if test="analysisR0025 != null">
+	  analysis_r0025=#{analysisR0025},
+	</if>
+	<if test="startR0004 != null">
+	  start_r0004=#{startR0004},
+	</if>
+	<if test="endR0004 != null">
+	  end_r0004=#{endR0004},
+	</if>
+	<if test="minR0004 != null">
+	  min_r0004=#{minR0004},
+	</if>
+	<if test="maxR0004 != null">
+	  max_r0004=#{maxR0004},
+	</if>
+	<if test="analysisR0004 != null">
+	  analysis_r0004=#{analysisR0004}
+	</if>
+	</set>
+	WHERE id=#{id}
+	</update>
+
+	<select id="findDailyReport" parameterType="java.util.HashMap" resultMap="dailyReprtResultMap">
+        SELECT * FROM metro_dailyreport WHERE
+ 		interval_id=#{intervalId}
+ 		AND left_or_right=#{leftOrRight}
+ 		AND date_format(report_time,'%Y-%m-%d')=date_format(#{reportTime},'%Y-%m-%d')
+	</select>
+
+	<!-- 总记录数 -->
+	<select id="countObjs" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+		SELECT COUNT(1) FROM metro_dailyreport 
+		WHERE 1=1 
+		<if test="intervalId != null">
+		AND interval_id=#{intervalId}
+		</if>
+		<if test="leftOrRight != null">
+		AND left_or_right=#{leftOrRight}
+		</if>
+		<if test="reportTime != null">
+		AND report_time=#{reportTime}
+		</if>
+	</select>
+
+	<!-- 分页查询 -->
+	<select id="findObjsList" parameterType="java.util.HashMap" resultMap="dailyReprtResultMap">
+		SELECT d.id, d.interval_id, d.left_or_right, d.report_time, d.operator, d.reviewer FROM metro_dailyreport d
+		WHERE 1=1 
+		<if test="intervalId != null">
+		AND d.interval_id=#{intervalId}
+		</if>
+		<if test="leftOrRight != null">
+		AND d.left_or_right=#{leftOrRight}
+		</if>
+		<if test="reportTime != null">
+		AND d.report_time=#{reportTime}
+		</if>
+		ORDER BY d.report_time DESC
+		LIMIT #{start},#{pageSize}
+	</select>
+</mapper>

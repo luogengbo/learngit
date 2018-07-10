@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.szgentech.metro.dao.IMetroLineIntervalSaDao">
+    <resultMap id="lineIntervalSaResultMap" type="com.szgentech.metro.model.MetroLineIntervalSa" >
+        <id property="id" column="id"/>
+        <result property="intervalId" column="interval_id"/>
+        <result property="leftOrRight" column="left_or_right"/>
+        <result property="ringNum" column="ring_num"/>
+        <result property="horizontalDev" column="horizontal_dev"/>
+        <result property="verticalDev" column="vertical_dev"/>
+        <result property="dateTime" column="date_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <insert id="insertObj" parameterType="com.szgentech.metro.model.MetroLineIntervalSa" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO metro_line_interval_sa(interval_id,left_or_right,ring_num,horizontal_dev,vertical_dev,date_time)
+        VALUES(#{intervalId},#{leftOrRight},#{ringNum},#{horizontalDev},#{verticalDev},now())
+    </insert>
+
+    <update id="updateObj" parameterType="java.util.HashMap">
+        UPDATE metro_line_interval_sa
+        SET update_time=now()
+        <if test="intervalId != null">
+            ,interval_id=#{intervalId}
+        </if>
+        <if test="leftOrRight != null">
+            ,left_or_right=#{leftOrRight}
+        </if>
+        <if test="ringNum != null">
+            ,ring_num=#{ringNum}
+        </if>
+        <if test="horizontalDev != null">
+            ,horizontal_dev=#{horizontalDev}
+        </if>
+        <if test="verticalDev != null">
+            ,vertical_dev=#{verticalDev}
+        </if>
+        WHERE id=#{intervalSaId}
+    </update>
+
+    <delete id="deleteObj" parameterType="java.util.HashMap">
+        DELETE FROM metro_line_interval_sa where id=#{intervalSaId}
+    </delete>
+    
+    <delete id="deleteObjall" parameterType="java.util.HashMap">
+	DELETE FROM metro_line_interval_sa 
+	WHERE interval_id=#{intervalId}
+		AND left_or_right=#{leftOrRight}
+	</delete>
+
+    <select id="findObjById" parameterType="java.util.HashMap" resultMap="lineIntervalSaResultMap">
+        SELECT * FROM metro_line_interval_sa where id=#{intervalSaId}
+    </select>
+
+    <!-- 总记录数 -->
+    <select id="countObjs" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+        SELECT COUNT(1) from metro_line_interval_sa
+        <if test="intervalId != null">
+            WHERE interval_id=#{intervalId}
+        </if>
+        <if test="leftOrRight != null">
+            AND left_or_right=#{leftOrRight}
+        </if>
+    </select>
+
+    <!-- 分页查询 -->
+    <select id="findObjsList" parameterType="java.util.HashMap" resultMap="lineIntervalSaResultMap">
+        SELECT * FROM metro_line_interval_sa
+        <if test="intervalId != null">
+            WHERE interval_id=#{intervalId}
+        </if>
+        <if test="leftOrRight != null">
+            AND left_or_right=#{leftOrRight}
+        </if>
+        ORDER BY CONVERT(ring_num,SIGNED) ASC    
+        <if test="start != null">
+            LIMIT #{start},#{pageSize}
+        </if>
+    </select>
+
+    <select id="findLineIntervalSas" parameterType="java.util.HashMap" resultMap="lineIntervalSaResultMap">
+        SELECT *  FROM metro_line_interval_sa where 1=1
+        <if test="intervalId!=null">
+            AND interval_id=#{intervalId}
+        </if>
+        <if test="leftOrRight!=null">
+            AND left_or_right=#{leftOrRight}
+        </if>
+        <if test="startRingNum!=null">
+        	<![CDATA[
+            AND CONVERT(ring_num,SIGNED)>=#{startRingNum}
+            ]]>
+        </if>
+        <if test="endRingNum!=null">
+        	<![CDATA[
+            AND CONVERT(ring_num,SIGNED)<=#{endRingNum}
+             ]]>
+        </if>
+        ORDER BY CONVERT(ring_num,SIGNED) ASC
+    </select>
+
+    <select id="findUniqueData" parameterType="java.util.HashMap" resultMap="lineIntervalSaResultMap">
+        SELECT * FROM metro_line_interval_sa WHERE
+        interval_id=#{intervalId}
+        AND ring_num=#{ringNum}
+        AND left_or_right=#{leftOrRight}
+    </select>
+</mapper>

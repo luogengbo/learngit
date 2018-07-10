@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.szgentech.metro.dao.SettlingDao">
+
+	<resultMap type="com.szgentech.metro.model.Homepage" id="HomepageMap">
+	<id column="id" property="id"/>
+	<result column="linename" property="linename"/>
+		<collection property="intervaliLR" javaType="java.util.List" 
+			ofType="com.szgentech.metro.model.MetroLineIntervaliLR">
+			<result column="intervalid" property="id"/>
+			<result column="intervalname" property="intervalname"/>
+		</collection>
+	</resultMap>
+	
+	<select id="findHomepage" parameterType="java.util.HashMap" resultMap="HomepageMap">
+		SELECT
+			l.id id,l.line_name linename,
+			i.interval_name intervalname,lr.interval_id intervalid
+		FROM metro_city c
+		INNER JOIN metro_line l ON c.id=l.city_id AND l.line_status=1
+		INNER JOIN metro_line_interval i ON l.id=i.line_id AND i.`status`=1
+		INNER JOIN metro_line_interval_lr lr ON i.id=lr.interval_id
+		INNER JOIN metro_user_data_rel re ON i.id=re.interval_id AND lr.left_or_right=re.left_or_right
+		INNER JOIN metro_user u ON u.id=re.user_id AND u.is_del=0
+		WHERE re.user_id = #{userId}
+		
+	</select>
+	
+	<select id="findSettlingName" parameterType="java.util.HashMap" resultType="com.szgentech.metro.model.SettlingName">
+		SELECT DISTINCT
+			sp.id id,sp.sp_name spname
+		FROM metro_line_interval_sp sp
+		LEFT JOIN metro_line_interval li ON li.id = sp.interval_id
+		WHERE  sp.interval_id = #{intervalid}
+	</select>
+	
+	<select id="findSettlingSp" parameterType="java.util.HashMap" resultType="com.szgentech.metro.model.SettlingSp">
+		SELECT
+			sp.sp_sum_add spsumadd,sp.sp_sum_sub spsumsub,sp.update_time updatetime
+		FROM metro_line_interval_sp sp where sp_name = #{spname}
+	</select>
+	
+	<select id="findSettlingMd" parameterType="java.util.HashMap" resultType="com.szgentech.metro.model.SettlingMd">
+		SELECT 
+			md.this_var thisvar,md.sum_var sumvar,md.update_time updatetime 
+		FROM metro_line_interval_md md where md.md_no = #{spname}
+	</select>
+	
+	<select id="getSettlingVelocity" parameterType="java.util.HashMap" resultType="com.szgentech.metro.model.SettlingVelocity">
+		SELECT DISTINCT
+			md.id id,md.md_no mdno,md.this_var thisvar,md.monitor_date monitordate
+		FROM metro_line_interval_md md
+		RIGHT JOIN metro_line_interval_md_re mdre ON mdre.id = md.md_re_id AND mdre.is_del = 0
+		RIGHT JOIN metro_line_interval li ON li.id = mdre.interval_id
+		WHERE mdre.interval_id = #{intervalid}
+		ORDER BY md.this_var desc limit 1
+	</select>
+	
+	<select id="getSettlingTotal" parameterType="java.util.HashMap" resultType="com.szgentech.metro.model.SettlingTotal">
+		SELECT DISTINCT
+			md.id id,md.md_no mdno,md.sum_var sumvar,md.monitor_date monitordate
+		FROM metro_line_interval_md md
+		RIGHT JOIN metro_line_interval_md_re mdre ON mdre.id = md.md_re_id AND mdre.is_del = 0
+		RIGHT JOIN metro_line_interval li ON li.id = mdre.interval_id
+		WHERE mdre.interval_id = #{intervalid}
+		ORDER BY md.sum_var desc limit 1
+	</select>
+	
+	<select id="findDuctId" parameterType="java.util.HashMap" resultType="com.szgentech.metro.model.MetroLineInterval">
+		SELECT 
+			li.duct_interval_id ductIntervalId
+		FROM 
+		metro_line_interval li
+		WHERE li.id = #{intervalId}
+	</select>
+	
+	<select id="MetroUpdateData" parameterType="java.util.HashMap" resultType="com.szgentech.metro.model.MetroUpdateApp">
+		SELECT
+			up_id upid,up_appname upAppName,up_version_code upVersionCode,up_version_name upVersionName,
+			up_updateurl upUpdateUrl,up_updatingcontent upUpdatingContent,facility_flag FacilityFlag,
+			up_whetherupdating UpwhetherUpdating,create_time CreateTime
+		FROM metro_update_app
+		WHERE facility_flag = #{facilityflag}
+		ORDER BY create_time DESC
+		LIMIT 1
+	</select>
+	
+	<select id="ListMetroUpdateData" parameterType="java.util.HashMap" resultType="com.szgentech.metro.model.MetroUpdateApp">
+		SELECT
+			up_id upid,up_appname upAppName,up_version_code upVersionCode,up_version_name upVersionName,
+			up_updateurl upUpdateUrl,up_updatingcontent upUpdatingContent,facility_flag FacilityFlag,
+			up_whetherupdating UpwhetherUpdating,create_time CreateTime
+		FROM metro_update_app
+		<if test="facilityflag != null">
+			WHERE facility_flag = #{facilityflag}
+		</if>
+		ORDER BY create_time DESC
+		LIMIT #{start},#{pageSize}
+	</select>
+	
+	<select id="countMetroUpdateData" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+		SELECT
+			count(1)
+		FROM metro_update_app
+		<if test="facilityflag != null">
+			WHERE facility_flag = #{facilityflag}
+		</if>
+	</select>
+	
+	<insert id="insertObj" parameterType="com.szgentech.metro.model.MetroUpdateApp">
+		INSERT INTO metro_update_app(up_appname,up_version_code,up_version_name,up_updateurl,up_updatingcontent,facility_flag,up_whetherupdating)
+		VALUES(#{upAppname}, #{upversioncode}, #{upversionname}, #{upUpdateURL}, #{upUpdatingContent}, #{facilityflag}, #{upWhetherupdating})
+	</insert>
+	
+	<select id="findMetroUpdateAppC" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+		SELECT count(1) FROM metro_update_app WHERE up_version_code = #{upversioncode}
+	</select>
+	
+	<delete id="deleteObj" parameterType="java.util.HashMap">
+		DELETE FROM metro_update_app WHERE up_id = #{upid}
+	</delete>
+	
+</mapper>
